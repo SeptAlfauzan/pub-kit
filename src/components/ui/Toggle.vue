@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends string">
-defineProps<{
+const props = defineProps<{
   modelValue: T
   options: { value: T; label: string; icon?: string }[]
 }>()
@@ -7,10 +7,24 @@ defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: T]
 }>()
+
+function onKeydown(e: KeyboardEvent) {
+  const index = props.options.findIndex((o) => o.value === props.modelValue)
+  if (index === -1) return
+  const next =
+    e.key === 'ArrowLeft' || e.key === 'ArrowUp'
+      ? (index - 1 + props.options.length) % props.options.length
+      : e.key === 'ArrowRight' || e.key === 'ArrowDown'
+        ? (index + 1) % props.options.length
+        : -1
+  if (next === -1) return
+  e.preventDefault()
+  emit('update:modelValue', props.options[next]!.value)
+}
 </script>
 
 <template>
-  <div class="toggle-group" role="radiogroup">
+  <div class="toggle-group" role="radiogroup" @keydown="onKeydown">
     <button
       v-for="opt in options"
       :key="opt.value"

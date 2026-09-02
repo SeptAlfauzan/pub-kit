@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Dropzone from '../components/ui/Dropzone.vue'
 
@@ -24,6 +24,22 @@ describe('Dropzone', () => {
     const input = wrapper.find('input[type="file"]')
     expect(input.attributes('aria-hidden')).toBe('true')
     expect(input.attributes('tabindex')).toBe('-1')
+  })
+
+  it('click()s the file input on Enter', async () => {
+    const wrapper = mount(Dropzone, { props: { label: 'Test' } })
+    const input = wrapper.find('input[type="file"]')
+    const click = vi.spyOn(input.element as HTMLInputElement, 'click').mockImplementation(() => {})
+    await wrapper.find('label').trigger('keydown', { key: 'Enter' })
+    expect(click).toHaveBeenCalled()
+  })
+
+  it('click()s the file input on Space', async () => {
+    const wrapper = mount(Dropzone, { props: { label: 'Test' } })
+    const input = wrapper.find('input[type="file"]')
+    const click = vi.spyOn(input.element as HTMLInputElement, 'click').mockImplementation(() => {})
+    await wrapper.find('label').trigger('keydown', { key: ' ' })
+    expect(click).toHaveBeenCalled()
   })
 
   it('applies inline class when inline prop is true', () => {
