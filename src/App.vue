@@ -2,13 +2,13 @@
 import { useProjectStore } from '@/stores/project'
 import StepRail from '@/components/StepRail.vue'
 import ExportButton from '@/components/ExportButton.vue'
+import IconUploader from '@/components/icon-step/IconUploader.vue'
 
 const store = useProjectStore()
 </script>
 
 <template>
   <div class="app-card">
-    <!-- Header -->
     <div class="header">
       <div class="header-left">
         <div class="logo">
@@ -26,7 +26,19 @@ const store = useProjectStore()
     <div class="layout">
       <StepRail />
       <div class="panel">
-        <slot />
+        <IconUploader v-if="store.currentStep === 'icon'" />
+        <section v-else-if="store.currentStep === 'shots'">
+          <h2 class="panel-title">Screenshots</h2>
+          <p class="panel-sub">Coming soon.</p>
+        </section>
+        <section v-else-if="store.currentStep === 'mockup'">
+          <h2 class="panel-title">Mockup preview</h2>
+          <p class="panel-sub">Coming soon.</p>
+        </section>
+        <section v-else-if="store.currentStep === 'store'">
+          <h2 class="panel-title">Store preview</h2>
+          <p class="panel-sub">Coming soon.</p>
+        </section>
       </div>
     </div>
   </div>
@@ -87,5 +99,15 @@ hr.divider {
 .panel {
   flex: 1;
   min-width: 0;
+}
+.panel-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.panel-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
 }
 </style>
