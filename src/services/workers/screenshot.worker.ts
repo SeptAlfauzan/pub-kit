@@ -8,8 +8,9 @@ interface ResizeJobPayload {
 self.onmessage = async (e: MessageEvent) => {
   const { id, payload } = e.data as { id: string; payload: ResizeJobPayload }
 
+  let bitmap: ImageBitmap | undefined
   try {
-    const bitmap = payload.sourceBitmap
+    bitmap = payload.sourceBitmap
     if (!bitmap) {
       self.postMessage({ id, status: 'error', error: 'No source bitmap' })
       return
@@ -56,9 +57,10 @@ self.onmessage = async (e: MessageEvent) => {
     }
 
     const blob = await canvas.convertToBlob({ type: 'image/png' })
-    bitmap.close()
     self.postMessage({ id, status: 'ok', result: blob })
   } catch (err) {
     self.postMessage({ id, status: 'error', error: String(err) })
+  } finally {
+    bitmap?.close()
   }
 }
