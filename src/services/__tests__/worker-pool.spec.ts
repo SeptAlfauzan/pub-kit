@@ -213,7 +213,7 @@ describe('WorkerPool', () => {
         this.id = AlwaysCrashWorker.instanceCount
       }
 
-      postMessage(data: unknown) {
+      postMessage(_data: unknown) {
         setTimeout(() => {
           this.onerror?.(new Event('error'))
         }, 0)

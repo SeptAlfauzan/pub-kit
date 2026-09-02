@@ -6,16 +6,22 @@ import { useProjectStore } from '@/stores/project'
 import type { IconResult } from '@/models/types'
 
 vi.mock('@/services/icon-generator', () => ({
-  generateIcons: vi.fn(),
+  generateIcons: vi.fn<() => Promise<IconResult[]>>(),
 }))
 
 vi.mock('@/services/validation', () => ({
-  validateIconResolution: vi.fn(() => ({ status: 'pass', message: 'OK' })),
+  validateIconResolution: vi.fn<() => { status: string; message: string }>(() => ({
+    status: 'pass',
+    message: 'OK',
+  })),
 }))
 
 vi.stubGlobal(
   'createImageBitmap',
-  vi.fn(async () => ({ width: 1024, height: 1024, close: vi.fn() } as unknown as ImageBitmap)),
+  vi.fn<() => Promise<ImageBitmap>>(
+    async () =>
+      ({ width: 1024, height: 1024, close: vi.fn<() => void>() }) as unknown as ImageBitmap,
+  ),
 )
 
 function makeResults(count: number): IconResult[] {
@@ -40,8 +46,9 @@ describe('IconUploader', () => {
 
   it('renders a Dropzone for file upload', () => {
     const wrapper = mount(Step1Icon)
-    expect(wrapper.findComponent({ name: 'Dropzone' }).exists() ||
-      wrapper.find('.dropzone').exists()).toBe(true)
+    expect(
+      wrapper.findComponent({ name: 'Dropzone' }).exists() || wrapper.find('.dropzone').exists(),
+    ).toBe(true)
   })
 
   it('calls generateIcons and sets store results on file drop', async () => {
@@ -74,7 +81,10 @@ describe('IconUploader', () => {
     const { generateIcons } = await import('@/services/icon-generator')
     let resolveGeneration: (v: IconResult[]) => void
     vi.mocked(generateIcons).mockImplementation(
-      () => new Promise((resolve) => { resolveGeneration = resolve }),
+      () =>
+        new Promise((resolve) => {
+          resolveGeneration = resolve
+        }),
     )
 
     const wrapper = mount(Step1Icon)
