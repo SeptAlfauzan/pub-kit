@@ -3,8 +3,6 @@ import { defineStore } from 'pinia'
 import type { StepId, Shot, FeatureGraphic, MockupSettings, IconResult } from '@/models/types'
 import { validateShot, validateFeatureGraphic } from '@/services/validation'
 
-let nextShotId = 0
-
 export const useProjectStore = defineStore('project', () => {
   const currentStep = ref<StepId>('icon')
   const appName = ref('My App')
@@ -49,11 +47,11 @@ export const useProjectStore = defineStore('project', () => {
   function setIconSource(url: string, file?: File) {
     iconSource.value = url
     iconFile.value = file ?? null
-    readySteps.icon = true
   }
 
   function setIconResults(results: IconResult[]) {
     iconResults.value = results
+    readySteps.icon = results.length > 0
   }
 
   function setTargetSize(index: number) {
@@ -109,6 +107,9 @@ export const useProjectStore = defineStore('project', () => {
 
   function clearFeatureGraphic() {
     featureGraphic.value = null
+    if (shots.value.length === 0) {
+      readySteps.shots = false
+    }
   }
 
   function setMockupFrame(frame: MockupSettings['frame']) {
