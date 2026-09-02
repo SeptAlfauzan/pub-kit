@@ -25,12 +25,7 @@ function isAndroidValid(w: number, h: number): boolean {
   return true
 }
 
-function isExactMatch(
-  w: number,
-  h: number,
-  targetW: number,
-  targetH: number,
-): boolean {
+function isExactMatch(w: number, h: number, targetW: number, targetH: number): boolean {
   return (w === targetW && h === targetH) || (w === targetH && h === targetW)
 }
 
@@ -63,14 +58,8 @@ export function validateShot(
   }
 }
 
-export function validateFeatureGraphic(
-  width: number,
-  height: number,
-): ValidationResult {
-  if (
-    width === FEATURE_GRAPHIC_SIZE.width &&
-    height === FEATURE_GRAPHIC_SIZE.height
-  ) {
+export function validateFeatureGraphic(width: number, height: number): ValidationResult {
+  if (width === FEATURE_GRAPHIC_SIZE.width && height === FEATURE_GRAPHIC_SIZE.height) {
     return { status: 'pass', message: `${width}×${height} · matches` }
   }
   return {
@@ -79,10 +68,7 @@ export function validateFeatureGraphic(
   }
 }
 
-export function validateIconResolution(
-  width: number,
-  height: number,
-): ValidationResult {
+export function validateIconResolution(width: number, height: number): ValidationResult {
   if (width < ICON_MIN_SIZE || height < ICON_MIN_SIZE) {
     return {
       status: 'warn',
