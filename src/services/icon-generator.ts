@@ -17,33 +17,35 @@ function getPool(): WorkerPool {
 
 export async function generateIcons(sourceFile: File): Promise<IconResult[]> {
   const bitmap = await createImageBitmap(sourceFile)
-  const sizes = [...IOS_ICON_SIZES, ...ALL_ANDROID_SIZES].map((s) => ({
-    key: s.key,
-    width: s.width,
-    height: s.height,
-  }))
+  try {
+    const sizes = [...IOS_ICON_SIZES, ...ALL_ANDROID_SIZES].map((s) => ({
+      key: s.key,
+      width: s.width,
+      height: s.height,
+    }))
 
-  const workerPool = getPool()
-  const results = await workerPool.dispatch<
-    { key: string; blob: Blob }[]
-  >({
-    id: `icon-${Date.now()}`,
-    op: 'gen-icons',
-    payload: {
-      sourceWidth: bitmap.width,
-      sourceHeight: bitmap.height,
-      sizes,
-      sourceBitmap: bitmap,
-    },
-  })
+    const workerPool = getPool()
+    const results = await workerPool.dispatch<
+      { key: string; blob: Blob }[]
+    >({
+      id: `icon-${Date.now()}`,
+      op: 'gen-icons',
+      payload: {
+        sourceWidth: bitmap.width,
+        sourceHeight: bitmap.height,
+        sizes,
+        sourceBitmap: bitmap,
+      },
+    })
 
-  bitmap.close()
-
-  return results.map((r) => ({
-    key: r.key,
-    blob: r.blob,
-    url: URL.createObjectURL(r.blob),
-  }))
+    return results.map((r) => ({
+      key: r.key,
+      blob: r.blob,
+      url: URL.createObjectURL(r.blob),
+    }))
+  } finally {
+    bitmap.close()
+  }
 }
 
 export function terminateIconWorker(): void {
