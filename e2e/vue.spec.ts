@@ -1,8 +1,19 @@
 import { test, expect } from '@playwright/test'
 
-// See here how to get started:
-// https://playwright.dev/docs/intro
-test('visits the app root url', async ({ page }) => {
+test('Launchsheet loads and shows all four steps', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('h1')).toHaveText('You did it!')
+
+  await expect(page.locator('.logo-title')).toHaveText('Launchsheet')
+  await expect(page.locator('.step-btn')).toHaveCount(4)
+
+  await expect(page.locator('#panel-icon')).toBeVisible()
+
+  await page.click('.step-btn:nth-child(2)')
+  await expect(page.locator('#panel-shots')).toBeVisible()
+
+  await page.click('.step-btn:nth-child(3)')
+  await expect(page.locator('#panel-mockup')).toBeVisible()
+
+  await page.click('.step-btn:nth-child(4)')
+  await expect(page.locator('#panel-store')).toBeVisible()
 })
