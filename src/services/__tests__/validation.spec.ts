@@ -70,6 +70,12 @@ describe('validateShot', () => {
     expect(result.status).toBe('warn')
   })
 
+  it('passes for 9:16 at min valid boundary 324x576', () => {
+    // 324x576: 9:16 ratio (GCD=36), both sides >= 320
+    const result = validateShot(324, 576, 3) // Android phone
+    expect(result.status).toBe('pass')
+  })
+
   it('warns for invalid target size index', () => {
     const result = validateShot(1080, 1920, 999)
     expect(result.status).toBe('warn')
