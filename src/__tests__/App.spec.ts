@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import App from '../App.vue'
 import { useProjectStore } from '@/stores/project'
-import Step1Icon from '../components/steps/Step1Icon.vue'
+import IconUploader from '../components/icon-step/IconUploader.vue'
 import Step2Screenshots from '../components/steps/Step2Screenshots.vue'
 import Step3Mockup from '../components/steps/Step3Mockup.vue'
 import Step4Store from '../components/steps/Step4Store.vue'
@@ -52,8 +52,8 @@ describe('App', () => {
 })
 
 describe('Step stubs mount', () => {
-  it('Step1Icon mounts without error', () => {
-    expect(mount(Step1Icon).text()).toContain('Source icon')
+  it('IconUploader mounts without error', () => {
+    expect(mount(IconUploader).text()).toContain('Source icon')
   })
 
   it('Step2Screenshots mounts without error', () => {
