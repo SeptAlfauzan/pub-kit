@@ -17,11 +17,21 @@ describe('useProjectStore', () => {
     expect(store.readyCount).toBe(0)
   })
 
-  it('sets icon step ready when icon uploaded', () => {
+  it('sets icon step ready when results are non-empty', () => {
     const store = useProjectStore()
     store.setIconSource('data:image/png;base64,...')
+    expect(store.readySteps.icon).toBe(false)
+    store.setIconResults([{ key: 'a', blob: new Blob(), url: '' }])
     expect(store.readySteps.icon).toBe(true)
     expect(store.readyCount).toBe(1)
+  })
+
+  it('does not set icon step ready when results are empty', () => {
+    const store = useProjectStore()
+    store.setIconSource('data:image/png;base64,...')
+    store.setIconResults([])
+    expect(store.readySteps.icon).toBe(false)
+    expect(store.readyCount).toBe(0)
   })
 
   it('adds a shot and sets shots step ready', () => {
@@ -82,5 +92,39 @@ describe('useProjectStore', () => {
     const store = useProjectStore()
     store.setStep('shots')
     expect(store.currentStep).toBe('shots')
+  })
+
+  it('clears feature graphic and resets shots-ready when no shots remain', () => {
+    const store = useProjectStore()
+    store.setFeatureGraphic({
+      file: new File([], 'fg.png'),
+      url: '',
+      width: 1024,
+      height: 500,
+    })
+    expect(store.readySteps.shots).toBe(true)
+    store.clearFeatureGraphic()
+    expect(store.featureGraphic).toBeNull()
+    expect(store.readySteps.shots).toBe(false)
+  })
+
+  it('clears feature graphic but keeps shots-ready when shots exist', () => {
+    const store = useProjectStore()
+    store.addShot({
+      id: 's1',
+      name: 'home.png',
+      width: 1320,
+      height: 2868,
+      file: new File([], 'home.png'),
+      url: '',
+    })
+    store.setFeatureGraphic({
+      file: new File([], 'fg.png'),
+      url: '',
+      width: 1024,
+      height: 500,
+    })
+    store.clearFeatureGraphic()
+    expect(store.readySteps.shots).toBe(true)
   })
 })
