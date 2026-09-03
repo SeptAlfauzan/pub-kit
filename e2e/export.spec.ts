@@ -21,7 +21,7 @@ test('exports framed store screenshots without error', async ({ page }) => {
 
   await page.click('.step-btn:nth-child(2)')
   await page.waitForSelector('#panel-shots .dropzone input[type=file]', { state: 'attached' })
-  await page.setInputFiles('#panel-shots .dropzone input[type=file]', fixture('shot.png'))
+  await page.setInputFiles('#panel-shots .dropzone input[type=file]', fixture('shot.webp'))
   await page.waitForSelector('.shot-row', { timeout: 15000 })
 
   await page.click('.step-btn:nth-child(3)')
@@ -39,8 +39,9 @@ test('exports framed store screenshots without error', async ({ page }) => {
     (f) => f.name.startsWith('screenshots/appstore/') && !f.dir,
   )
   expect(appstoreFile).toBeTruthy()
+  expect(appstoreFile!.name).toMatch(/\.png$/)
   const framed = await appstoreFile!.async('blob')
-  const raw = fs.readFileSync(fixture('shot.png'))
+  const raw = fs.readFileSync(fixture('shot.webp'))
   expect(framed.size).not.toBe(raw.length)
 
   expect(errors.filter((e) => !e.includes('favicon'))).toEqual([])

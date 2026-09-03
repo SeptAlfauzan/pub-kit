@@ -11,6 +11,10 @@ export interface ZipInput {
   storeScreenshots: { id: string; blob: Blob; name: string }[]
 }
 
+function pngName(name: string): string {
+  return name.replace(/\.[^.]+$/, '.png')
+}
+
 function generateContentsJson(): string {
   const images = IOS_ICON_SIZES.map((s) => {
     const scale = s.key.includes('-3x') ? '3x' : s.key.includes('-2x') ? '2x' : '1x'
@@ -60,14 +64,15 @@ export function buildZipStructure(zip: JSZip, input: ZipInput): void {
     const idx = String(i + 1).padStart(2, '0')
     const store = input.storeScreenshots.find((m) => m.id === shot.id)
     const blob = store ? store.blob : shot.file
-    appstoreFolder.file(`${idx}_${shot.name}`, blob)
-    playstoreFolder.file(`${idx}_${shot.name}`, blob)
+    const name = store ? pngName(shot.name) : shot.name
+    appstoreFolder.file(`${idx}_${name}`, blob)
+    playstoreFolder.file(`${idx}_${name}`, blob)
   }
 
   if (input.mockupImages.length > 0) {
     const marketing = zip.folder('marketing')!
     for (const m of input.mockupImages) {
-      marketing.file(m.name, m.blob)
+      marketing.file(pngName(m.name), m.blob)
     }
   }
 }

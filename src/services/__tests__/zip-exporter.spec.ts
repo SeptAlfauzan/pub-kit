@@ -70,4 +70,28 @@ describe('buildZipStructure', () => {
     expect(appstore).toBeTruthy()
     expect(playstore).toBeTruthy()
   })
+
+  it('renames rendered screenshots to .png regardless of source extension', () => {
+    const zip = new JSZip()
+    const shot = {
+      id: 's1',
+      name: 'photo.webp',
+      width: 1320,
+      height: 2868,
+      file: new File(['raw-webp'], 'photo.webp'),
+      url: 'blob:raw',
+      status: 'pass' as const,
+      statusMessage: 'ok',
+    }
+    buildZipStructure(zip, {
+      iconResults: [],
+      shots: [shot],
+      featureGraphic: null,
+      mockupImages: [],
+      storeScreenshots: [{ id: 's1', blob: new Blob(['framed-png']), name: 'photo.webp' }],
+    })
+    expect(zip.file('screenshots/appstore/01_photo.png')).toBeTruthy()
+    expect(zip.file('screenshots/playstore/01_photo.png')).toBeTruthy()
+    expect(zip.file('screenshots/appstore/01_photo.webp')).toBeFalsy()
+  })
 })
