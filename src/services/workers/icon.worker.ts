@@ -8,8 +8,9 @@ interface IconJobPayload {
 self.onmessage = async (e: MessageEvent) => {
   const { id, payload } = e.data as { id: string; payload: IconJobPayload }
 
+  let bitmap: ImageBitmap | undefined
   try {
-    const bitmap = payload.sourceBitmap
+    bitmap = payload.sourceBitmap
     if (!bitmap) {
       self.postMessage({ id, status: 'error', error: 'No source bitmap' })
       return
@@ -27,9 +28,10 @@ self.onmessage = async (e: MessageEvent) => {
       results.push({ key: size.key, blob })
     }
 
-    bitmap.close()
     self.postMessage({ id, status: 'ok', result: results })
   } catch (err) {
     self.postMessage({ id, status: 'error', error: String(err) })
+  } finally {
+    bitmap?.close()
   }
 }
