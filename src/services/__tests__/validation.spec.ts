@@ -58,6 +58,22 @@ describe('validateShot', () => {
     const result = validateShot(1080, 2340, 3)
     expect(result.status).toBe('warn')
   })
+
+  it('passes for 16:9 at max boundary 3840x2160', () => {
+    const result = validateShot(3840, 2160, 3)
+    expect(result.status).toBe('pass')
+  })
+
+  it('warns for 9:16 below min side 320x180', () => {
+    // GCD(320,180)=20 → [16,9] ratio valid, but h=180 < 320
+    const result = validateShot(320, 180, 3)
+    expect(result.status).toBe('warn')
+  })
+
+  it('warns for invalid target size index', () => {
+    const result = validateShot(1080, 1920, 999)
+    expect(result.status).toBe('warn')
+  })
 })
 
 describe('validateFeatureGraphic', () => {
