@@ -152,6 +152,102 @@ describe('WorkerPool', () => {
     pool.terminate()
   })
 
+  it('retries a crashing worker job and replaces the dead worker', async () => {
+    let totalPostCalls = 0
+    class CrashThenSucceedWorker {
+      static instanceCount = 0
+      id: number
+      onmessage: ((e: MessageEvent) => void) | null = null
+      onerror: ((e: Event) => void) | null = null
+
+      constructor(_url: string | URL) {
+        CrashThenSucceedWorker.instanceCount++
+        this.id = CrashThenSucceedWorker.instanceCount
+      }
+
+      postMessage(data: unknown) {
+        totalPostCalls++
+        if (totalPostCalls <= 3) {
+          // Crash: original + 3 retries all crash
+          setTimeout(() => {
+            this.onerror?.(new Event('error'))
+          }, 0)
+        } else {
+          // Succeed on retry #3
+          setTimeout(() => {
+            this.onmessage?.({
+              data: { id: (data as { id: string }).id, status: 'ok', result: `ok-${this.id}` },
+            } as MessageEvent)
+          }, 0)
+        }
+      }
+
+      terminate() {}
+    }
+
+    totalPostCalls = 0
+    CrashThenSucceedWorker.instanceCount = 0
+    vi.stubGlobal('Worker', CrashThenSucceedWorker)
+
+    const pool = new WorkerPool({
+      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      maxWorkers: 1,
+    })
+
+    const result = await pool.dispatch({ id: 'crash-job', op: 'test', payload: {} })
+    expect(result).toBeDefined()
+    // Worker was replaced (at least 2 instances created)
+    expect(CrashThenSucceedWorker.instanceCount).toBeGreaterThanOrEqual(2)
+    pool.terminate()
+  })
+
+  it('rejects after 3 crashes and replaces the worker', async () => {
+    class AlwaysCrashWorker {
+      static instanceCount = 0
+      id: number
+      onmessage: ((e: MessageEvent) => void) | null = null
+      onerror: ((e: Event) => void) | null = null
+
+      constructor(_url: string | URL) {
+        AlwaysCrashWorker.instanceCount++
+        this.id = AlwaysCrashWorker.instanceCount
+      }
+
+      postMessage(data: unknown) {
+        setTimeout(() => {
+          this.onerror?.(new Event('error'))
+        }, 0)
+      }
+
+      terminate() {}
+    }
+
+    AlwaysCrashWorker.instanceCount = 0
+    vi.stubGlobal('Worker', AlwaysCrashWorker)
+
+    const pool = new WorkerPool({
+      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      maxWorkers: 1,
+    })
+
+    await expect(pool.dispatch({ id: 'doom-crash', op: 'test', payload: {} })).rejects.toThrow(
+      'Worker job failed after 3 retries',
+    )
+    // Worker replaced each time
+    expect(AlwaysCrashWorker.instanceCount).toBeGreaterThanOrEqual(2)
+    pool.terminate()
+  })
+
+  it('creates at least 1 worker when maxWorkers is 0', () => {
+    vi.stubGlobal('navigator', { hardwareConcurrency: 0 })
+    const pool = new WorkerPool({
+      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      maxWorkers: 0,
+    })
+    expect(MockWorker.instanceCount).toBe(1)
+    pool.terminate()
+  })
+
   it('cancels a pending job', async () => {
     const pool = new WorkerPool({
       workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
