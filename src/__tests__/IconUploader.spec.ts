@@ -180,7 +180,7 @@ describe('IconUploader', () => {
     expect(labeledTiles.length).toBeGreaterThan(0)
   })
 
-  it('revokes source and result URLs on unmount', async () => {
+  it('does not revoke source/result URLs on unmount', async () => {
     const revokeSpy = vi.spyOn(URL, 'revokeObjectURL')
     const { generateIcons } = await import('@/services/icon-generator')
     vi.mocked(generateIcons).mockResolvedValue(makeResults(3))
@@ -195,11 +195,14 @@ describe('IconUploader', () => {
     expect(store.iconSource).toBeTruthy()
     expect(store.iconResults).toHaveLength(3)
 
+    const sourceUrl = store.iconSource
+    const resultUrls = store.iconResults.map((r) => r.url)
+
     wrapper.unmount()
 
-    expect(revokeSpy).toHaveBeenCalledWith(store.iconSource)
-    for (const r of store.iconResults) {
-      expect(revokeSpy).toHaveBeenCalledWith(r.url)
+    expect(revokeSpy).not.toHaveBeenCalledWith(sourceUrl)
+    for (const url of resultUrls) {
+      expect(revokeSpy).not.toHaveBeenCalledWith(url)
     }
 
     revokeSpy.mockRestore()

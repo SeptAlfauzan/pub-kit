@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useProjectStore } from '@/stores/project'
+import StoreShotCard from './StoreShotCard.vue'
 
 const store = useProjectStore()
 </script>
@@ -8,7 +9,11 @@ const store = useProjectStore()
   <div class="store-card">
     <div
       class="feature-banner"
-      :style="store.featureGraphic ? { backgroundImage: `url(${store.featureGraphic.url})` } : {}"
+      :style="
+        store.featureGraphic
+          ? { backgroundImage: `url(${store.featureGraphic.url})` }
+          : { backgroundColor: store.mockupSettings.bg }
+      "
     >
       {{ store.featureGraphic ? '' : 'Feature graphic · 1024×500' }}
     </div>
@@ -31,9 +36,12 @@ const store = useProjectStore()
         <button class="store-install-btn">Install</button>
       </div>
       <div class="store-shots">
-        <div v-for="shot in store.shots" :key="shot.id" class="store-shot-thumb">
-          <img :src="shot.url" :alt="shot.name" class="store-shot-img" />
-        </div>
+        <StoreShotCard
+          v-for="shot in store.shots"
+          :key="shot.id"
+          :shot-url="shot.url"
+          :shot-name="shot.name"
+        />
         <div v-if="store.shots.length === 0" class="store-shot-thumb placeholder">—</div>
       </div>
     </div>
@@ -117,22 +125,6 @@ const store = useProjectStore()
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 4px;
-}
-.store-shot-thumb {
-  flex-shrink: 0;
-  width: 62px;
-  height: 110px;
-  border-radius: 8px;
-  background: var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.store-shot-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 .placeholder {
   font-size: 12px;

@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { onUnmounted } from 'vue'
 import { useProjectStore } from '@/stores/project'
 import { FEATURE_GRAPHIC_SIZE } from '@/config/store-screenshot-sizes'
 import Dropzone from '@/components/ui/Dropzone.vue'
 
 const store = useProjectStore()
 
-onUnmounted(() => {
-  if (store.featureGraphic?.url) URL.revokeObjectURL(store.featureGraphic.url)
-})
-
 function onFiles(files: File[]) {
   const file = files[0]
   if (!file) return
+  if (store.featureGraphic?.url) URL.revokeObjectURL(store.featureGraphic.url)
   const url = URL.createObjectURL(file)
   const img = new Image()
   img.onload = () => {

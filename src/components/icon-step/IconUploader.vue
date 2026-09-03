@@ -6,17 +6,12 @@ import { ALL_ANDROID_SIZES } from '@/config/android-icon-sizes'
 import { validateIconResolution } from '@/services/validation'
 import Dropzone from '@/components/ui/Dropzone.vue'
 import IconSizeGrid from './IconSizeGrid.vue'
-import { onUnmounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const store = useProjectStore()
 const warning = ref<string | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
-
-onUnmounted(() => {
-  revokeSourceUrl()
-  revokeResultUrls()
-})
 
 function revokeSourceUrl() {
   if (store.iconSource) {
