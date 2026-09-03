@@ -14,7 +14,7 @@ import MockupRow from '@/components/mockup-step/MockupRow.vue'
 import AppStoreCard from '@/components/store-preview-step/AppStoreCard.vue'
 import GooglePlayCard from '@/components/store-preview-step/GooglePlayCard.vue'
 import { exportAll } from '@/services/zip-exporter'
-import { stageToPng } from '@/services/mockup-composer'
+import { stageToPng, renderStoreShot } from '@/services/mockup-composer'
 
 const store = useProjectStore()
 const exporting = ref(false)
@@ -43,20 +43,31 @@ async function handleExport() {
   exporting.value = true
   try {
     const mockupImages: { id: string; blob: Blob; name: string }[] = []
-    if (store.readySteps.mockup && mockupRowRef.value) {
-      for (const shot of store.shots) {
+    const storeScreenshots: { id: string; blob: Blob; name: string }[] = []
+    const shotPromises = store.shots.map(async (shot) => {
+      const framed = await renderStoreShot({
+        shotUrl: shot.url,
+        bg: store.mockupSettings.bg,
+        frame: store.mockupSettings.frame,
+      })
+      storeScreenshots.push({ id: shot.id, blob: framed, name: shot.name })
+
+      if (store.readySteps.mockup && mockupRowRef.value) {
         const stage = mockupRowRef.value.getStage(shot.id)
         if (stage) {
           const blob = await stageToPng(stage)
           mockupImages.push({ id: shot.id, blob, name: shot.name })
         }
       }
-    }
+    })
+    await Promise.all(shotPromises)
+
     const blob = await exportAll({
       iconResults: store.iconResults,
       shots: store.shots,
       featureGraphic: store.featureGraphic?.file ?? null,
       mockupImages,
+      storeScreenshots,
     })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')

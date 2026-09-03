@@ -8,6 +8,7 @@ export interface ZipInput {
   shots: Shot[]
   featureGraphic: Blob | null
   mockupImages: { id: string; blob: Blob; name: string }[]
+  storeScreenshots: { id: string; blob: Blob; name: string }[]
 }
 
 function generateContentsJson(): string {
@@ -57,8 +58,8 @@ export function buildZipStructure(zip: JSZip, input: ZipInput): void {
   for (let i = 0; i < input.shots.length; i++) {
     const shot = input.shots[i]!
     const idx = String(i + 1).padStart(2, '0')
-    const mockup = input.mockupImages.find((m) => m.id === shot.id)
-    const blob = mockup ? mockup.blob : shot.file
+    const store = input.storeScreenshots.find((m) => m.id === shot.id)
+    const blob = store ? store.blob : shot.file
     appstoreFolder.file(`${idx}_${shot.name}`, blob)
     playstoreFolder.file(`${idx}_${shot.name}`, blob)
   }

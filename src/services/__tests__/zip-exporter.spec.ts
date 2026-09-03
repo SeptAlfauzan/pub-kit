@@ -9,7 +9,7 @@ describe('buildZipStructure', () => {
       { key: 'appstore', blob: new Blob(['fake']), url: '' },
       { key: 'iphone-60-2x', blob: new Blob(['fake']), url: '' },
     ]
-    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [] })
+    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [], storeScreenshots: [] })
     const files = Object.keys(zip.files)
     expect(files.some((f) => f.startsWith('ios/AppIcon.appiconset/'))).toBe(true)
   })
@@ -20,7 +20,7 @@ describe('buildZipStructure', () => {
       { key: 'mdpi', blob: new Blob(['fake']), url: '' },
       { key: 'hdpi', blob: new Blob(['fake']), url: '' },
     ]
-    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [] })
+    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [], storeScreenshots: [] })
     const files = Object.keys(zip.files)
     expect(files.some((f) => f.startsWith('android/mipmap-mdpi/'))).toBe(true)
     expect(files.some((f) => f.startsWith('android/mipmap-hdpi/'))).toBe(true)
@@ -29,11 +29,10 @@ describe('buildZipStructure', () => {
   it('creates Contents.json', () => {
     const zip = new JSZip()
     const iconResults = [{ key: 'appstore', blob: new Blob(['fake']), url: '' }]
-    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [] })
+    buildZipStructure(zip, { iconResults, shots: [], featureGraphic: null, mockupImages: [], storeScreenshots: [] })
     const files = Object.keys(zip.files)
     expect(files.some((f) => f.endsWith('Contents.json'))).toBe(true)
   })
-
   it('creates feature-graphic.png when provided', () => {
     const zip = new JSZip()
     buildZipStructure(zip, {
@@ -41,8 +40,34 @@ describe('buildZipStructure', () => {
       shots: [],
       featureGraphic: new Blob(['fake-banner']),
       mockupImages: [],
+      storeScreenshots: [],
     })
     const files = Object.keys(zip.files)
     expect(files).toContain('android/feature-graphic.png')
+  })
+
+  it('uses framed store screenshots over raw shots', () => {
+    const zip = new JSZip()
+    const shot = {
+      id: 's1',
+      name: 'hero.png',
+      width: 1320,
+      height: 2868,
+      file: new File(['raw'], 'hero.png'),
+      url: 'blob:raw',
+      status: 'pass' as const,
+      statusMessage: 'ok',
+    }
+    buildZipStructure(zip, {
+      iconResults: [],
+      shots: [shot],
+      featureGraphic: null,
+      mockupImages: [],
+      storeScreenshots: [{ id: 's1', blob: new Blob(['framed']), name: 'hero.png' }],
+    })
+    const appstore = zip.file('screenshots/appstore/01_hero.png')!
+    const playstore = zip.file('screenshots/playstore/01_hero.png')!
+    expect(appstore).toBeTruthy()
+    expect(playstore).toBeTruthy()
   })
 })
