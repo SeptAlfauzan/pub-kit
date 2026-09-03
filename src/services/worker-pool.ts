@@ -31,8 +31,7 @@ export class WorkerPool {
     { workerUrl, maxWorkers = 4 }: PoolOptions,
     private _workerUrl: string | URL = workerUrl,
   ) {
-    const rawCount =
-      typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 2 : 2
+    const rawCount = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 2 : 2
     const count = Math.max(1, Math.min(rawCount, maxWorkers))
     for (let i = 0; i < count; i++) {
       this._spawnWorker(workerUrl, i)
