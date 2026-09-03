@@ -90,12 +90,7 @@ export const useProjectStore = defineStore('project', () => {
     }
   }
 
-  function setFeatureGraphic(data: {
-    file: File
-    url: string
-    width: number
-    height: number
-  }) {
+  function setFeatureGraphic(data: { file: File; url: string; width: number; height: number }) {
     const result = validateFeatureGraphic(data.width, data.height)
     featureGraphic.value = {
       ...data,
@@ -136,6 +131,10 @@ export const useProjectStore = defineStore('project', () => {
     appName.value = name
   }
 
+  function setStoreReady() {
+    readySteps.store = true
+  }
+
   return {
     currentStep,
     appName,
@@ -161,5 +160,6 @@ export const useProjectStore = defineStore('project', () => {
     setMockupBgImage,
     setMockupCaption,
     setAppName,
+    setStoreReady,
   }
 })

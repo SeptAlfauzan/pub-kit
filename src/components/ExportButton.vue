@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   disabled?: boolean
+  exporting?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -9,9 +10,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <button class="btn-primary" :disabled @click="emit('export')">
+  <button class="btn-primary" :disabled="disabled || exporting" @click="emit('export')">
     <i class="fa-solid fa-download" aria-hidden="true"></i>
-    Export all
+    {{ exporting ? 'Exporting…' : 'Export all' }}
   </button>
 </template>
 
