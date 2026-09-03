@@ -71,11 +71,7 @@ async function onFiles(files: File[]) {
       Upload a 1024×1024 PNG. Every store size regenerates from this one file.
     </p>
 
-    <Dropzone
-      label="Drop file or click to browse"
-      accept="image/png"
-      @files="onFiles"
-    />
+    <Dropzone label="Drop file or click to browse" accept="image/png" @files="onFiles" />
 
     <div v-if="warning" class="warn-text" role="alert">
       <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
@@ -92,17 +88,9 @@ async function onFiles(files: File[]) {
       {{ error }}
     </div>
 
-    <IconSizeGrid
-      title="iOS icons"
-      :sizes="IOS_ICON_SIZES"
-      :results="store.iconResults"
-    />
+    <IconSizeGrid title="iOS icons" :sizes="IOS_ICON_SIZES" :results="store.iconResults" />
 
-    <IconSizeGrid
-      title="Android icons"
-      :sizes="ALL_ANDROID_SIZES"
-      :results="store.iconResults"
-    />
+    <IconSizeGrid title="Android icons" :sizes="ALL_ANDROID_SIZES" :results="store.iconResults" />
   </section>
 </template>
 
