@@ -25,9 +25,7 @@ export async function generateIcons(sourceFile: File): Promise<IconResult[]> {
     }))
 
     const workerPool = getPool()
-    const results = await workerPool.dispatch<
-      { key: string; blob: Blob }[]
-    >({
+    const results = await workerPool.dispatch<{ key: string; blob: Blob }[]>({
       id: `icon-${Date.now()}`,
       op: 'gen-icons',
       payload: {
