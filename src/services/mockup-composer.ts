@@ -36,7 +36,16 @@ export async function renderStoreShot(opts: StoreShotRender): Promise<Blob> {
   const frameX = pad
   const frameY = pad
 
+  const container = document.createElement('div')
+  container.style.position = 'fixed'
+  container.style.left = '-9999px'
+  container.style.top = '0'
+  container.style.width = `${stageWidth}px`
+  container.style.height = `${stageHeight}px`
+  document.body.appendChild(container)
+
   const stage = new Konva.Stage({
+    container,
     width: stageWidth,
     height: stageHeight,
   })
@@ -76,8 +85,10 @@ export async function renderStoreShot(opts: StoreShotRender): Promise<Blob> {
   }
 
   stage.add(layer)
+  layer.draw()
 
   const blob = await stageToPng(stage)
   stage.destroy()
+  container.remove()
   return blob
 }
