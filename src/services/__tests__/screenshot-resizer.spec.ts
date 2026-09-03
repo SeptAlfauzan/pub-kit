@@ -7,7 +7,7 @@ describe('resizeScreenshot', () => {
   })
 
   it('closes the main-thread bitmap even when the worker dispatch rejects', async () => {
-    const closeSpy = vi.fn()
+    const closeSpy = vi.fn<() => void>()
     vi.stubGlobal(
       'createImageBitmap',
       vi.fn(
@@ -20,13 +20,13 @@ describe('resizeScreenshot', () => {
       ),
     )
 
-    const rejectDispatch = vi.fn(async () => {
+    const rejectDispatch = vi.fn<() => Promise<never>>(async () => {
       throw new Error('Worker job failed after 3 retries')
     })
 
     vi.doMock('../worker-pool', () => ({
       WorkerPool: function MockWorkerPool() {
-        return { dispatch: rejectDispatch, terminate: vi.fn() }
+        return { dispatch: rejectDispatch, terminate: vi.fn<() => void>() }
       },
     }))
 
@@ -52,7 +52,7 @@ describe('batchResize', () => {
   })
 
   it('closes bitmaps even when dispatch rejects mid-batch', async () => {
-    const closeSpy = vi.fn()
+    const closeSpy = vi.fn<() => void>()
     let callCount = 0
 
     vi.stubGlobal(
@@ -70,12 +70,12 @@ describe('batchResize', () => {
     vi.doMock('../worker-pool', () => ({
       WorkerPool: function MockWorkerPool() {
         return {
-          dispatch: vi.fn(async () => {
+          dispatch: vi.fn<() => Promise<Blob>>(async () => {
             callCount++
             if (callCount === 2) throw new Error('Worker failed')
             return { type: 'image/png' } as Blob
           }),
-          terminate: vi.fn(),
+          terminate: vi.fn<() => void>(),
         }
       },
     }))

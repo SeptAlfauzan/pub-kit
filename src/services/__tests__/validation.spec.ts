@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  validateShot,
-  validateFeatureGraphic,
-  validateIconResolution,
-} from '../validation'
-import { TARGET_SIZES } from '@/config/store-screenshot-sizes'
+import { validateShot, validateFeatureGraphic, validateIconResolution } from '../validation'
 
 describe('validateShot', () => {
   it('passes for exact portrait match on iOS target', () => {
