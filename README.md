@@ -71,3 +71,14 @@ pnpm test:e2e --debug
 ```sh
 pnpm lint
 ```
+
+## Docker Deployment
+
+Push a `v*` git tag to trigger the GitHub Action which builds and publishes the image to Docker Hub as `septalfauzan/pub-kit:<version>` (versioned tags only, no `latest`).
+
+Required repository secrets:
+- `DOCKERHUB_USERNAME` — Docker Hub username (e.g. `septalfauzan`)
+- `DOCKERHUB_TOKEN` — Docker Hub personal access token with push permissions
+
+Local build: `docker build -t septalfauzan/pub-kit:<version> .`
+Run: `docker run -p 8080:80 septalfauzan/pub-kit:<version>`
