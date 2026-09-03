@@ -8,19 +8,23 @@ describe('generateIcons', () => {
   })
 
   it('closes the main-thread bitmap even when the worker dispatch rejects', async () => {
-    const closeSpy = vi.fn()
+    const closeSpy = vi.fn<() => void>()
     vi.stubGlobal(
       'createImageBitmap',
-      vi.fn(async () => ({ width: 1, height: 1, close: closeSpy } as unknown as ImageBitmap)),
+      vi.fn(async () => ({ width: 1, height: 1, close: closeSpy }) as unknown as ImageBitmap),
     )
 
-    const rejectDispatch = vi.fn(async () => {
+    const rejectDispatch = vi.fn<() => Promise<never>>(async () => {
       throw new Error('Worker job failed after 3 retries')
     })
 
     vi.doMock('../worker-pool', () => ({
       WorkerPool: function MockWorkerPool() {
-        return { dispatch: rejectDispatch, terminate: vi.fn(), cancel: vi.fn() }
+        return {
+          dispatch: rejectDispatch,
+          terminate: vi.fn<() => void>(),
+          cancel: vi.fn<() => void>(),
+        }
       },
     }))
 
