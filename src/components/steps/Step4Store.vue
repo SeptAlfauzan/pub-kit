@@ -3,9 +3,7 @@
 <template>
   <div>
     <h2 class="panel-title">Store preview</h2>
-    <p class="panel-sub">
-      How your icon and screenshots read on each store's product page.
-    </p>
+    <p class="panel-sub">How your icon and screenshots read on each store's product page.</p>
   </div>
 </template>
 

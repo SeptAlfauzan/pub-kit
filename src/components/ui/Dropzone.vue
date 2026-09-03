@@ -46,14 +46,7 @@ function onKeydown(e: KeyboardEvent) {
       <i class="fa-solid fa-upload" aria-hidden="true"></i>
     </slot>
     <span>{{ label }}</span>
-    <input
-      type="file"
-      :accept
-      :multiple
-      @change="onChange"
-      tabindex="-1"
-      aria-hidden="true"
-    />
+    <input type="file" :accept :multiple @change="onChange" tabindex="-1" aria-hidden="true" />
   </label>
 </template>
 
@@ -70,7 +63,9 @@ function onKeydown(e: KeyboardEvent) {
   cursor: pointer;
   color: var(--text-secondary);
   font-size: 13px;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 .dropzone:hover {
   border-color: var(--fill-primary);
