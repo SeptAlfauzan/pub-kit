@@ -90,7 +90,7 @@ async function handleExport() {
           <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
         </div>
         <div>
-          <div class="logo-title">Launchsheet</div>
+          <div class="logo-title">PubKit</div>
           <div class="logo-sub">Project · {{ store.appName }}</div>
         </div>
       </div>

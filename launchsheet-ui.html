@@ -1,644 +1,953 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Launchsheet – App Store Asset Generator</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PubKit – App Store Asset Generator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  :root {
-    --bg: #f5f5f4;
-    --surface-1: #ffffff;
-    --surface-2: #f0efed;
-    --border: #e2e0db;
-    --border-strong: #c9c6bf;
-    --text-primary: #1a1916;
-    --text-secondary: #6b6860;
-    --text-muted: #9e9b94;
-    --text-accent: #1d4ed8;
-    --text-success: #15803d;
-    --text-warning: #b45309;
-    --fill-primary: #1d4ed8;
-    --on-primary: #ffffff;
-    --fill-accent: #dbeafe;
-    --on-accent: #1e40af;
-    --fill-control: #e9e8e4;
-    --fill-ghost-selected: #eef2ff;
-    --fill-ghost-hover: #f5f5f4;
-    --bg-accent: #dbeafe;
-    --radius: 8px;
-    --h-control: 36px;
-    --font-mono: 'Menlo', 'Consolas', monospace;
-  }
+      :root {
+        --bg: #f5f5f4;
+        --surface-1: #ffffff;
+        --surface-2: #f0efed;
+        --border: #e2e0db;
+        --border-strong: #c9c6bf;
+        --text-primary: #1a1916;
+        --text-secondary: #6b6860;
+        --text-muted: #9e9b94;
+        --text-accent: #1d4ed8;
+        --text-success: #15803d;
+        --text-warning: #b45309;
+        --fill-primary: #1d4ed8;
+        --on-primary: #ffffff;
+        --fill-accent: #dbeafe;
+        --on-accent: #1e40af;
+        --fill-control: #e9e8e4;
+        --fill-ghost-selected: #eef2ff;
+        --fill-ghost-hover: #f5f5f4;
+        --bg-accent: #dbeafe;
+        --radius: 8px;
+        --h-control: 36px;
+        --font-mono: 'Menlo', 'Consolas', monospace;
+      }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text-primary);
-    min-height: 100vh;
-    padding: 24px;
-  }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+        padding: 24px;
+      }
 
-  .app-card {
-    max-width: 860px;
-    margin: 0 auto;
-    background: var(--surface-1);
-    border-radius: 16px;
-    border: 0.5px solid var(--border);
-    padding: 24px;
-  }
+      .app-card {
+        max-width: 860px;
+        margin: 0 auto;
+        background: var(--surface-1);
+        border-radius: 16px;
+        border: 0.5px solid var(--border);
+        padding: 24px;
+      }
 
-  /* ── Header ── */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-  .header-left { display: flex; align-items: center; gap: 10px; }
-  .logo {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--fill-primary);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .logo i { font-size: 15px; color: var(--on-primary); }
-  .logo-title { font-size: 16px; font-weight: 500; }
-  .logo-sub  { font-size: 12px; color: var(--text-muted); }
+      /* ── Header ── */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--fill-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .logo i {
+        font-size: 15px;
+        color: var(--on-primary);
+      }
+      .logo-title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .logo-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
 
-  .btn-primary {
-    background: var(--fill-primary);
-    color: var(--on-primary);
-    border: none;
-    height: var(--h-control);
-    display: flex; align-items: center; gap: 6px;
-    padding: 0 14px;
-    border-radius: var(--radius);
-    font-size: 14px; cursor: pointer;
-  }
-  .btn-primary:hover { opacity: .9; }
+      .btn-primary {
+        background: var(--fill-primary);
+        color: var(--on-primary);
+        border: none;
+        height: var(--h-control);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 14px;
+        border-radius: var(--radius);
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .btn-primary:hover {
+        opacity: 0.9;
+      }
 
-  hr.divider { border: none; border-top: 0.5px solid var(--border); margin-bottom: 1.25rem; }
+      hr.divider {
+        border: none;
+        border-top: 0.5px solid var(--border);
+        margin-bottom: 1.25rem;
+      }
 
-  /* ── Layout ── */
-  .layout { display: flex; gap: 20px; align-items: flex-start; }
+      /* ── Layout ── */
+      .layout {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
 
-  /* ── Step nav ── */
-  nav.step-nav {
-    width: 150px; flex-shrink: 0;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  .step-btn {
-    display: flex; align-items: center; gap: 10px;
-    text-align: left; background: transparent;
-    border: none; padding: 8px 10px;
-    border-radius: var(--radius);
-    color: var(--text-secondary);
-    font-size: 13px; cursor: pointer; width: 100%;
-    font-family: inherit;
-  }
-  .step-btn:hover { background: var(--fill-ghost-hover); }
-  .step-btn.active { background: var(--fill-ghost-selected); color: var(--text-primary); }
-  .step-num {
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--fill-control); color: var(--text-secondary);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; flex-shrink: 0;
-  }
-  .step-btn.active .step-num { background: var(--fill-accent); color: var(--on-accent); }
-  .step-check { margin-left: auto; color: var(--text-success); font-size: 14px; }
-  .ready-summary {
-    margin-top: 10px; padding-top: 10px;
-    border-top: 0.5px solid var(--border);
-    font-size: 12px; color: var(--text-muted);
-  }
+      /* ── Step nav ── */
+      nav.step-nav {
+        width: 150px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .step-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 8px 10px;
+        border-radius: var(--radius);
+        color: var(--text-secondary);
+        font-size: 13px;
+        cursor: pointer;
+        width: 100%;
+        font-family: inherit;
+      }
+      .step-btn:hover {
+        background: var(--fill-ghost-hover);
+      }
+      .step-btn.active {
+        background: var(--fill-ghost-selected);
+        color: var(--text-primary);
+      }
+      .step-num {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--fill-control);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        flex-shrink: 0;
+      }
+      .step-btn.active .step-num {
+        background: var(--fill-accent);
+        color: var(--on-accent);
+      }
+      .step-check {
+        margin-left: auto;
+        color: var(--text-success);
+        font-size: 14px;
+      }
+      .ready-summary {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 0.5px solid var(--border);
+        font-size: 12px;
+        color: var(--text-muted);
+      }
 
-  /* ── Panels ── */
-  .panel { flex: 1; min-width: 0; }
-  section { display: none; }
-  section.active { display: block; }
+      /* ── Panels ── */
+      .panel {
+        flex: 1;
+        min-width: 0;
+      }
+      section {
+        display: none;
+      }
+      section.active {
+        display: block;
+      }
 
-  h2.panel-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
-  p.panel-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; }
-  h3.sub-heading {
-    font-size: 13px; font-weight: 500;
-    color: var(--text-secondary);
-    margin: 20px 0 8px;
-  }
+      h2.panel-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      p.panel-sub {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 14px;
+      }
+      h3.sub-heading {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin: 20px 0 8px;
+      }
 
-  /* ── Drop zone ── */
-  .dropzone {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 6px;
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius);
-    padding: 22px; cursor: pointer;
-    color: var(--text-secondary); font-size: 13px;
-    transition: background .15s, border-color .15s;
-  }
-  .dropzone:hover { border-color: var(--fill-primary); background: var(--fill-ghost-hover); }
-  .dropzone.inline { flex-direction: row; padding: 14px 16px; }
+      /* ── Drop zone ── */
+      .dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius);
+        padding: 22px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        font-size: 13px;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .dropzone:hover {
+        border-color: var(--fill-primary);
+        background: var(--fill-ghost-hover);
+      }
+      .dropzone.inline {
+        flex-direction: row;
+        padding: 14px 16px;
+      }
 
-  input[type="file"] { display: none; }
+      input[type='file'] {
+        display: none;
+      }
 
-  /* ── Icon grids ── */
-  .icon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-    gap: 12px;
-  }
-  .icon-tile-wrap {
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-  }
-  .icon-tile {
-    width: 52px; height: 52px; border-radius: 12px;
-    background: var(--bg-accent);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden; font-size: 18px; font-weight: 500;
-    color: var(--text-accent);
-  }
-  .icon-tile img { width: 100%; height: 100%; object-fit: cover; }
-  .tile-label { font-size: 11px; color: var(--text-secondary); text-align: center; }
-  .tile-size  { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+      /* ── Icon grids ── */
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+        gap: 12px;
+      }
+      .icon-tile-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+      }
+      .icon-tile {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: var(--bg-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text-accent);
+      }
+      .icon-tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .tile-label {
+        font-size: 11px;
+        color: var(--text-secondary);
+        text-align: center;
+      }
+      .tile-size {
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+      }
 
-  /* ── Screenshots ── */
-  .size-row-header {
-    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
-  }
-  .size-row-header label { font-size: 13px; color: var(--text-secondary); flex-shrink: 0; }
-  .size-row-header select { flex: 1; }
+      /* ── Screenshots ── */
+      .size-row-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .size-row-header label {
+        font-size: 13px;
+        color: var(--text-secondary);
+        flex-shrink: 0;
+      }
+      .size-row-header select {
+        flex: 1;
+      }
 
-  .shot-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    margin-bottom: 6px;
-    font-size: 13px;
-  }
-  .shot-row i { color: var(--text-secondary); flex-shrink: 0; }
-  .shot-name  { flex: 1; }
-  .shot-status { font-size: 11px; font-family: var(--font-mono); }
-  .shot-remove { cursor: pointer; color: var(--text-muted); }
-  .shot-remove:hover { color: var(--text-primary); }
+      .shot-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--surface-2);
+        border-radius: var(--radius);
+        margin-bottom: 6px;
+        font-size: 13px;
+      }
+      .shot-row i {
+        color: var(--text-secondary);
+        flex-shrink: 0;
+      }
+      .shot-name {
+        flex: 1;
+      }
+      .shot-status {
+        font-size: 11px;
+        font-family: var(--font-mono);
+      }
+      .shot-remove {
+        cursor: pointer;
+        color: var(--text-muted);
+      }
+      .shot-remove:hover {
+        color: var(--text-primary);
+      }
 
-  .pass   { color: var(--text-success); }
-  .warn   { color: var(--text-warning); }
+      .pass {
+        color: var(--text-success);
+      }
+      .warn {
+        color: var(--text-warning);
+      }
 
-  .feature-row {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    margin-top: 10px;
-    font-size: 13px;
-  }
-  .feature-row i { color: var(--text-secondary); }
-  .feature-name { flex: 1; color: var(--text-muted); }
+      .feature-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--surface-2);
+        border-radius: var(--radius);
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      .feature-row i {
+        color: var(--text-secondary);
+      }
+      .feature-name {
+        flex: 1;
+        color: var(--text-muted);
+      }
 
-  /* ── Mockup ── */
-  .mockup-controls { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .toggle-btn {
-    cursor: pointer; font: inherit;
-    background: var(--surface-2);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 7px 12px; color: var(--text-primary);
-    display: flex; align-items: center; gap: 6px;
-    font-size: 13px;
-  }
-  .toggle-btn.selected { border: 2px solid var(--fill-primary); color: var(--text-accent); }
-  .swatch-row { display: flex; gap: 10px; margin-bottom: 18px; }
-  .swatch {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 0.5px solid var(--border); cursor: pointer;
-  }
-  .swatch.selected { outline: 2px solid var(--fill-primary); outline-offset: 2px; }
+      /* ── Mockup ── */
+      .mockup-controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .toggle-btn {
+        cursor: pointer;
+        font: inherit;
+        background: var(--surface-2);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 7px 12px;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .toggle-btn.selected {
+        border: 2px solid var(--fill-primary);
+        color: var(--text-accent);
+      }
+      .swatch-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .swatch {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 0.5px solid var(--border);
+        cursor: pointer;
+      }
+      .swatch.selected {
+        outline: 2px solid var(--fill-primary);
+        outline-offset: 2px;
+      }
 
-  .mockup-row { display: flex; gap: 14px; flex-wrap: wrap; }
-  .mockup-card { width: 140px; }
-  .mockup-stage {
-    border-radius: 14px; padding: 14px 10px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-  }
-  .mockup-frame {
-    width: 96px; height: 190px; border-radius: 18px;
-    border: 4px solid var(--surface-2);
-    background: var(--surface-1);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-  }
-  .mockup-frame-label { font-size: 18px; font-weight: 500; }
-  .mockup-caption-input {
-    width: 100%; font-size: 11px; text-align: center;
-    background: transparent; border: none; outline: none;
-    font-family: inherit; padding: 2px;
-    border-bottom: 1px dashed rgba(0,0,0,.15);
-  }
-  .mockup-filename { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+      .mockup-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .mockup-card {
+        width: 140px;
+      }
+      .mockup-stage {
+        border-radius: 14px;
+        padding: 14px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .mockup-frame {
+        width: 96px;
+        height: 190px;
+        border-radius: 18px;
+        border: 4px solid var(--surface-2);
+        background: var(--surface-1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .mockup-frame-label {
+        font-size: 18px;
+        font-weight: 500;
+      }
+      .mockup-caption-input {
+        width: 100%;
+        font-size: 11px;
+        text-align: center;
+        background: transparent;
+        border: none;
+        outline: none;
+        font-family: inherit;
+        padding: 2px;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+      }
+      .mockup-filename {
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 6px;
+      }
 
-  /* ── Store preview ── */
-  .store-toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
-  .store-card {
-    background: var(--surface-2);
-    border-radius: 16px; overflow: hidden;
-  }
-  .store-card-body { padding: 16px; }
-  .store-app-row {
-    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
-  }
-  .store-icon {
-    width: 56px; height: 56px; border-radius: 14px;
-    background: var(--bg-accent);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 22px; font-weight: 500; color: var(--text-accent);
-  }
-  .store-icon.sm { width: 48px; height: 48px; border-radius: 12px; font-size: 18px; }
-  .store-meta { flex: 1; min-width: 0; }
-  .store-meta .app-name   { font-size: 15px; font-weight: 500; }
-  .store-meta .app-cat    { font-size: 12px; color: var(--text-secondary); }
-  .store-meta .app-rating { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .store-get-btn {
-    background: var(--bg-accent); color: var(--text-accent);
-    border: none; border-radius: 14px;
-    padding: 6px 16px; font-size: 13px; font-weight: 500;
-    flex-shrink: 0; cursor: pointer;
-  }
-  .store-install-btn {
-    border: 0.5px solid var(--border-strong); background: transparent;
-    border-radius: 16px; padding: 6px 16px;
-    font-size: 13px; flex-shrink: 0; cursor: pointer;
-  }
-  .store-shots { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-  .store-shot-thumb {
-    flex-shrink: 0; border-radius: 10px;
-    background: var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 500; color: var(--text-muted);
-  }
-  .feature-banner {
-    height: 80px; background: var(--surface-2);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 11px;
-    background-size: cover; background-position: center;
-  }
+      /* ── Store preview ── */
+      .store-toggle-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .store-card {
+        background: var(--surface-2);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .store-card-body {
+        padding: 16px;
+      }
+      .store-app-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .store-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: var(--bg-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--text-accent);
+      }
+      .store-icon.sm {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        font-size: 18px;
+      }
+      .store-meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .store-meta .app-name {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .store-meta .app-cat {
+        font-size: 12px;
+        color: var(--text-secondary);
+      }
+      .store-meta .app-rating {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+      .store-get-btn {
+        background: var(--bg-accent);
+        color: var(--text-accent);
+        border: none;
+        border-radius: 14px;
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .store-install-btn {
+        border: 0.5px solid var(--border-strong);
+        background: transparent;
+        border-radius: 16px;
+        padding: 6px 16px;
+        font-size: 13px;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+      .store-shots {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .store-shot-thumb {
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+      .feature-banner {
+        height: 80px;
+        background: var(--surface-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 11px;
+        background-size: cover;
+        background-position: center;
+      }
 
-  /* ── Form controls ── */
-  select, input[type="text"] {
-    height: var(--h-control);
-    border: 0.5px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 0 10px;
-    font-size: 13px; font-family: inherit;
-    background: var(--surface-1);
-    color: var(--text-primary);
-    outline: none;
-    width: 100%;
-  }
-  select:focus, input[type="text"]:focus { border-color: var(--fill-primary); }
-</style>
-</head>
-<body>
-
-<div class="app-card">
-  <!-- Header -->
-  <div class="header">
-    <div class="header-left">
-      <div class="logo"><i class="fa-solid fa-layer-group"></i></div>
-      <div>
-        <div class="logo-title">Launchsheet</div>
-        <div class="logo-sub">Project · Weathernow</div>
+      /* ── Form controls ── */
+      select,
+      input[type='text'] {
+        height: var(--h-control);
+        border: 0.5px solid var(--border-strong);
+        border-radius: var(--radius);
+        padding: 0 10px;
+        font-size: 13px;
+        font-family: inherit;
+        background: var(--surface-1);
+        color: var(--text-primary);
+        outline: none;
+        width: 100%;
+      }
+      select:focus,
+      input[type='text']:focus {
+        border-color: var(--fill-primary);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-card">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <div class="logo"><i class="fa-solid fa-layer-group"></i></div>
+          <div>
+            <div class="logo-title">Launchsheet</div>
+            <div class="logo-sub">Project · Weathernow</div>
+          </div>
+        </div>
+        <button class="btn-primary" id="export-btn">
+          <i class="fa-solid fa-download"></i> Export all
+        </button>
       </div>
+      <hr class="divider" />
+
+      <div class="layout">
+        <!-- Step nav -->
+        <nav class="step-nav">
+          <button class="step-btn active" data-step="icon">
+            <span class="step-num">1</span>
+            <span>Icon</span>
+          </button>
+          <button class="step-btn" data-step="shots">
+            <span class="step-num">2</span>
+            <span>Screenshots</span>
+          </button>
+          <button class="step-btn" data-step="mockup">
+            <span class="step-num">3</span>
+            <span>Mockup preview</span>
+          </button>
+          <button class="step-btn" data-step="store">
+            <span class="step-num">4</span>
+            <span>Store preview</span>
+          </button>
+          <div class="ready-summary" id="ready-summary">0 of 3 steps ready</div>
+        </nav>
+
+        <!-- Panels -->
+        <div class="panel">
+          <!-- ── Step 1: Icon ── -->
+          <section id="panel-icon" class="active">
+            <h2 class="panel-title">Source icon</h2>
+            <p class="panel-sub">
+              Upload a 1024×1024 PNG. Every store size regenerates from this one file.
+            </p>
+
+            <label for="icon-upload" class="dropzone">
+              <i class="fa-solid fa-upload"></i>
+              <span>Drop file or click to browse</span>
+            </label>
+            <input type="file" id="icon-upload" accept="image/png" />
+
+            <h3 class="sub-heading">iOS icons</h3>
+            <div class="icon-grid" id="ios-grid"></div>
+
+            <h3 class="sub-heading">Android icons</h3>
+            <div class="icon-grid" id="android-grid"></div>
+          </section>
+
+          <!-- ── Step 2: Screenshots ── -->
+          <section id="panel-shots">
+            <h2 class="panel-title">Raw screenshots</h2>
+            <p class="panel-sub">
+              Pick a target size first, then upload. Each file is validated against it
+              automatically.
+            </p>
+
+            <div class="size-row-header">
+              <label for="target-size-select">Target size</label>
+              <select id="target-size-select"></select>
+            </div>
+
+            <label for="shots-upload" class="dropzone">
+              <i class="fa-solid fa-upload"></i>
+              <span>Drop files or click to browse</span>
+            </label>
+            <input type="file" id="shots-upload" multiple accept="image/*" />
+
+            <div id="shots-list" style="margin-top: 12px"></div>
+
+            <h3 class="sub-heading">Play Store feature graphic</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px">
+              A single 1024×500 banner displayed at the top of your Play Store listing.
+            </p>
+            <label for="feature-upload" class="dropzone inline">
+              <i class="fa-solid fa-upload"></i>
+              <span>Drop banner or click to browse</span>
+            </label>
+            <input type="file" id="feature-upload" accept="image/*" />
+            <div class="feature-row" id="feature-row">
+              <i class="fa-solid fa-image"></i>
+              <span class="feature-name" id="feature-name">No banner uploaded</span>
+              <span class="shot-status" id="feature-status"></span>
+            </div>
+          </section>
+
+          <!-- ── Step 3: Mockup ── -->
+          <section id="panel-mockup">
+            <h2 class="panel-title">Marketing mockup</h2>
+            <p class="panel-sub">
+              Frame and background apply to every screen. Edit each headline individually.
+            </p>
+
+            <div class="mockup-controls">
+              <button class="toggle-btn frame-btn selected" data-frame="phone">
+                <i class="fa-solid fa-mobile-screen-button"></i> Phone
+              </button>
+              <button class="toggle-btn frame-btn" data-frame="tablet">
+                <i class="fa-solid fa-tablet-screen-button"></i> Tablet
+              </button>
+              <button class="toggle-btn frame-btn" data-frame="none">
+                <i class="fa-regular fa-square"></i> None
+              </button>
+            </div>
+
+            <div class="swatch-row">
+              <button
+                class="swatch selected"
+                data-bg="#B5D4F4"
+                data-text="#042C53"
+                style="background: #b5d4f4"
+                aria-label="Blue"
+              ></button>
+              <button
+                class="swatch"
+                data-bg="#9FE1CB"
+                data-text="#04342C"
+                style="background: #9fe1cb"
+                aria-label="Teal"
+              ></button>
+              <button
+                class="swatch"
+                data-bg="#F5C4B3"
+                data-text="#4A1B0C"
+                style="background: #f5c4b3"
+                aria-label="Coral"
+              ></button>
+              <button
+                class="swatch"
+                data-bg="#D3D1C7"
+                data-text="#2C2C2A"
+                style="background: #d3d1c7"
+                aria-label="Gray"
+              ></button>
+            </div>
+
+            <div class="mockup-row" id="mockup-row"></div>
+          </section>
+
+          <!-- ── Step 4: Store preview ── -->
+          <section id="panel-store">
+            <h2 class="panel-title">Store listing preview</h2>
+            <p class="panel-sub">
+              How your icon and screenshots read on each store's product page.
+            </p>
+
+            <div class="store-toggle-row">
+              <button class="toggle-btn store-toggle selected" data-store="ios">App Store</button>
+              <button class="toggle-btn store-toggle" data-store="android">Google Play</button>
+            </div>
+
+            <!-- App Store -->
+            <div id="store-ios">
+              <div class="store-card">
+                <div class="store-card-body">
+                  <div class="store-app-row">
+                    <div class="store-icon" id="appstore-icon">W</div>
+                    <div class="store-meta">
+                      <div class="app-name">Weathernow</div>
+                      <div class="app-cat">Health &amp; Fitness</div>
+                      <div class="app-rating">★ 4.8 · 2.3k ratings</div>
+                    </div>
+                    <button class="store-get-btn">Get</button>
+                  </div>
+                  <div class="store-shots" id="appstore-shots"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Google Play -->
+            <div id="store-android" style="display: none">
+              <div class="store-card">
+                <div class="feature-banner" id="play-feature-banner">
+                  Feature graphic · 1024×500
+                </div>
+                <div class="store-card-body">
+                  <div class="store-app-row">
+                    <div class="store-icon sm" id="play-icon">W</div>
+                    <div class="store-meta">
+                      <div class="app-name">Weathernow</div>
+                      <div class="app-cat">Launchsheet Labs</div>
+                      <div class="app-rating">★ 4.6 · 10k+ downloads</div>
+                    </div>
+                    <button class="store-install-btn">Install</button>
+                  </div>
+                  <div class="store-shots" id="play-shots"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- /panel -->
+      </div>
+      <!-- /layout -->
     </div>
-    <button class="btn-primary" id="export-btn">
-      <i class="fa-solid fa-download"></i> Export all
-    </button>
-  </div>
-  <hr class="divider" />
+    <!-- /app-card -->
 
-  <div class="layout">
-    <!-- Step nav -->
-    <nav class="step-nav">
-      <button class="step-btn active" data-step="icon">
-        <span class="step-num">1</span>
-        <span>Icon</span>
-      </button>
-      <button class="step-btn" data-step="shots">
-        <span class="step-num">2</span>
-        <span>Screenshots</span>
-      </button>
-      <button class="step-btn" data-step="mockup">
-        <span class="step-num">3</span>
-        <span>Mockup preview</span>
-      </button>
-      <button class="step-btn" data-step="store">
-        <span class="step-num">4</span>
-        <span>Store preview</span>
-      </button>
-      <div class="ready-summary" id="ready-summary">0 of 3 steps ready</div>
-    </nav>
-
-    <!-- Panels -->
-    <div class="panel">
-
-      <!-- ── Step 1: Icon ── -->
-      <section id="panel-icon" class="active">
-        <h2 class="panel-title">Source icon</h2>
-        <p class="panel-sub">Upload a 1024×1024 PNG. Every store size regenerates from this one file.</p>
-
-        <label for="icon-upload" class="dropzone">
-          <i class="fa-solid fa-upload"></i>
-          <span>Drop file or click to browse</span>
-        </label>
-        <input type="file" id="icon-upload" accept="image/png" />
-
-        <h3 class="sub-heading">iOS icons</h3>
-        <div class="icon-grid" id="ios-grid"></div>
-
-        <h3 class="sub-heading">Android icons</h3>
-        <div class="icon-grid" id="android-grid"></div>
-      </section>
-
-      <!-- ── Step 2: Screenshots ── -->
-      <section id="panel-shots">
-        <h2 class="panel-title">Raw screenshots</h2>
-        <p class="panel-sub">Pick a target size first, then upload. Each file is validated against it automatically.</p>
-
-        <div class="size-row-header">
-          <label for="target-size-select">Target size</label>
-          <select id="target-size-select"></select>
-        </div>
-
-        <label for="shots-upload" class="dropzone">
-          <i class="fa-solid fa-upload"></i>
-          <span>Drop files or click to browse</span>
-        </label>
-        <input type="file" id="shots-upload" multiple accept="image/*" />
-
-        <div id="shots-list" style="margin-top:12px;"></div>
-
-        <h3 class="sub-heading">Play Store feature graphic</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">
-          A single 1024×500 banner displayed at the top of your Play Store listing.
-        </p>
-        <label for="feature-upload" class="dropzone inline">
-          <i class="fa-solid fa-upload"></i>
-          <span>Drop banner or click to browse</span>
-        </label>
-        <input type="file" id="feature-upload" accept="image/*" />
-        <div class="feature-row" id="feature-row">
-          <i class="fa-solid fa-image"></i>
-          <span class="feature-name" id="feature-name">No banner uploaded</span>
-          <span class="shot-status" id="feature-status"></span>
-        </div>
-      </section>
-
-      <!-- ── Step 3: Mockup ── -->
-      <section id="panel-mockup">
-        <h2 class="panel-title">Marketing mockup</h2>
-        <p class="panel-sub">Frame and background apply to every screen. Edit each headline individually.</p>
-
-        <div class="mockup-controls">
-          <button class="toggle-btn frame-btn selected" data-frame="phone">
-            <i class="fa-solid fa-mobile-screen-button"></i> Phone
-          </button>
-          <button class="toggle-btn frame-btn" data-frame="tablet">
-            <i class="fa-solid fa-tablet-screen-button"></i> Tablet
-          </button>
-          <button class="toggle-btn frame-btn" data-frame="none">
-            <i class="fa-regular fa-square"></i> None
-          </button>
-        </div>
-
-        <div class="swatch-row">
-          <button class="swatch selected" data-bg="#B5D4F4" data-text="#042C53" style="background:#B5D4F4" aria-label="Blue"></button>
-          <button class="swatch" data-bg="#9FE1CB" data-text="#04342C" style="background:#9FE1CB" aria-label="Teal"></button>
-          <button class="swatch" data-bg="#F5C4B3" data-text="#4A1B0C" style="background:#F5C4B3" aria-label="Coral"></button>
-          <button class="swatch" data-bg="#D3D1C7" data-text="#2C2C2A" style="background:#D3D1C7" aria-label="Gray"></button>
-        </div>
-
-        <div class="mockup-row" id="mockup-row"></div>
-      </section>
-
-      <!-- ── Step 4: Store preview ── -->
-      <section id="panel-store">
-        <h2 class="panel-title">Store listing preview</h2>
-        <p class="panel-sub">How your icon and screenshots read on each store's product page.</p>
-
-        <div class="store-toggle-row">
-          <button class="toggle-btn store-toggle selected" data-store="ios">App Store</button>
-          <button class="toggle-btn store-toggle" data-store="android">Google Play</button>
-        </div>
-
-        <!-- App Store -->
-        <div id="store-ios">
-          <div class="store-card">
-            <div class="store-card-body">
-              <div class="store-app-row">
-                <div class="store-icon" id="appstore-icon">W</div>
-                <div class="store-meta">
-                  <div class="app-name">Weathernow</div>
-                  <div class="app-cat">Health &amp; Fitness</div>
-                  <div class="app-rating">★ 4.8 · 2.3k ratings</div>
-                </div>
-                <button class="store-get-btn">Get</button>
-              </div>
-              <div class="store-shots" id="appstore-shots"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Google Play -->
-        <div id="store-android" style="display:none;">
-          <div class="store-card">
-            <div class="feature-banner" id="play-feature-banner">Feature graphic · 1024×500</div>
-            <div class="store-card-body">
-              <div class="store-app-row">
-                <div class="store-icon sm" id="play-icon">W</div>
-                <div class="store-meta">
-                  <div class="app-name">Weathernow</div>
-                  <div class="app-cat">Launchsheet Labs</div>
-                  <div class="app-rating">★ 4.6 · 10k+ downloads</div>
-                </div>
-                <button class="store-install-btn">Install</button>
-              </div>
-              <div class="store-shots" id="play-shots"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div><!-- /panel -->
-  </div><!-- /layout -->
-</div><!-- /app-card -->
-
-<script>
-/* ─────────────────────────────
+    <script>
+      /* ─────────────────────────────
    DATA
 ───────────────────────────── */
-const IOS_SIZES = [
-  {l:'App Store', s:'1024×1024'},
-  {l:'iPhone app', s:'180×180'},
-  {l:'iPad app', s:'167×167'},
-  {l:'Spotlight', s:'120×120'},
-  {l:'Settings', s:'87×87'},
-  {l:'Notification', s:'60×60'},
-];
-const ANDROID_SIZES = [
-  {l:'Play Store', s:'512×512'},
-  {l:'xxxhdpi', s:'192×192'},
-  {l:'xxhdpi', s:'144×144'},
-  {l:'xhdpi', s:'96×96'},
-  {l:'hdpi', s:'72×72'},
-  {l:'mdpi', s:'48×48'},
-];
-const TARGET_SIZES = [
-  {label:'iPhone 6.9" display', w:1320, h:2868},
-  {label:'iPhone 6.5" display', w:1284, h:2778},
-  {label:'iPad Pro 13"',        w:2064, h:2752},
-  {label:'Android phone',       w:1080, h:1920},
-  {label:'Android 7" tablet',   w:1200, h:1920},
-  {label:'Android 10" tablet',  w:1600, h:2560},
-];
-const MOCKUP_SCREENS = [
-  {name:'home.png',     caption:'Track every workout, effortlessly'},
-  {name:'profile.png',  caption:'See your stats at a glance'},
-  {name:'settings.png', caption:'Make it yours'},
-];
-let currentBg   = '#B5D4F4';
-let currentText = '#042C53';
-let currentFrame = 'phone';
-let iconSrc = null;
+      const IOS_SIZES = [
+        { l: 'App Store', s: '1024×1024' },
+        { l: 'iPhone app', s: '180×180' },
+        { l: 'iPad app', s: '167×167' },
+        { l: 'Spotlight', s: '120×120' },
+        { l: 'Settings', s: '87×87' },
+        { l: 'Notification', s: '60×60' },
+      ]
+      const ANDROID_SIZES = [
+        { l: 'Play Store', s: '512×512' },
+        { l: 'xxxhdpi', s: '192×192' },
+        { l: 'xxhdpi', s: '144×144' },
+        { l: 'xhdpi', s: '96×96' },
+        { l: 'hdpi', s: '72×72' },
+        { l: 'mdpi', s: '48×48' },
+      ]
+      const TARGET_SIZES = [
+        { label: 'iPhone 6.9" display', w: 1320, h: 2868 },
+        { label: 'iPhone 6.5" display', w: 1284, h: 2778 },
+        { label: 'iPad Pro 13"', w: 2064, h: 2752 },
+        { label: 'Android phone', w: 1080, h: 1920 },
+        { label: 'Android 7" tablet', w: 1200, h: 1920 },
+        { label: 'Android 10" tablet', w: 1600, h: 2560 },
+      ]
+      const MOCKUP_SCREENS = [
+        { name: 'home.png', caption: 'Track every workout, effortlessly' },
+        { name: 'profile.png', caption: 'See your stats at a glance' },
+        { name: 'settings.png', caption: 'Make it yours' },
+      ]
+      let currentBg = '#B5D4F4'
+      let currentText = '#042C53'
+      let currentFrame = 'phone'
+      let iconSrc = null
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    ICON GRID
 ───────────────────────────── */
-function renderGrid(id, sizes) {
-  const el = document.getElementById(id);
-  el.innerHTML = sizes.map(s => `
+      function renderGrid(id, sizes) {
+        const el = document.getElementById(id)
+        el.innerHTML = sizes
+          .map(
+            (s) => `
     <div class="icon-tile-wrap">
       <div class="icon-tile" data-tile>
         ${iconSrc ? `<img src="${iconSrc}" alt="" />` : 'W'}
       </div>
       <span class="tile-label">${s.l}</span>
       <span class="tile-size">${s.s}</span>
-    </div>`).join('');
-}
-renderGrid('ios-grid', IOS_SIZES);
-renderGrid('android-grid', ANDROID_SIZES);
+    </div>`,
+          )
+          .join('')
+      }
+      renderGrid('ios-grid', IOS_SIZES)
+      renderGrid('android-grid', ANDROID_SIZES)
 
-document.getElementById('icon-upload').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    iconSrc = ev.target.result;
-    document.querySelectorAll('[data-tile]').forEach(t => {
-      t.innerHTML = `<img src="${iconSrc}" alt="" />`;
-    });
-    // update store preview icons
-    ['appstore-icon','play-icon'].forEach(id => {
-      const el = document.getElementById(id);
-      el.innerHTML = `<img src="${iconSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="" />`;
-    });
-    markStepReady('icon');
-  };
-  reader.readAsDataURL(file);
-});
+      document.getElementById('icon-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = (ev) => {
+          iconSrc = ev.target.result
+          document.querySelectorAll('[data-tile]').forEach((t) => {
+            t.innerHTML = `<img src="${iconSrc}" alt="" />`
+          })
+          // update store preview icons
+          ;['appstore-icon', 'play-icon'].forEach((id) => {
+            const el = document.getElementById(id)
+            el.innerHTML = `<img src="${iconSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="" />`
+          })
+          markStepReady('icon')
+        }
+        reader.readAsDataURL(file)
+      })
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    TARGET SIZE DROPDOWN
 ───────────────────────────── */
-const selectEl = document.getElementById('target-size-select');
-selectEl.innerHTML = TARGET_SIZES.map((t,i) =>
-  `<option value="${i}">${t.label} · ${t.w}×${t.h}</option>`
-).join('');
+      const selectEl = document.getElementById('target-size-select')
+      selectEl.innerHTML = TARGET_SIZES.map(
+        (t, i) => `<option value="${i}">${t.label} · ${t.w}×${t.h}</option>`,
+      ).join('')
 
-selectEl.addEventListener('change', () => {
-  document.querySelectorAll('.shot-row').forEach(revalidateRow);
-});
+      selectEl.addEventListener('change', () => {
+        document.querySelectorAll('.shot-row').forEach(revalidateRow)
+      })
 
-function isMatch(w, h, idx) {
-  const t = TARGET_SIZES[idx];
-  return (w === t.w && h === t.h) || (w === t.h && h === t.w);
-}
+      function isMatch(w, h, idx) {
+        const t = TARGET_SIZES[idx]
+        return (w === t.w && h === t.h) || (w === t.h && h === t.w)
+      }
 
-function revalidateRow(row) {
-  const w = +row.dataset.w, h = +row.dataset.h;
-  const t = TARGET_SIZES[selectEl.value];
-  const ok = isMatch(w, h, selectEl.value);
-  const statusEl = row.querySelector('.shot-status');
-  statusEl.textContent = `${w}×${h} · ${ok ? 'matches' : `doesn't match ${t.w}×${t.h}`}`;
-  statusEl.className = 'shot-status ' + (ok ? 'pass' : 'warn');
-}
+      function revalidateRow(row) {
+        const w = +row.dataset.w,
+          h = +row.dataset.h
+        const t = TARGET_SIZES[selectEl.value]
+        const ok = isMatch(w, h, selectEl.value)
+        const statusEl = row.querySelector('.shot-status')
+        statusEl.textContent = `${w}×${h} · ${ok ? 'matches' : `doesn't match ${t.w}×${t.h}`}`
+        statusEl.className = 'shot-status ' + (ok ? 'pass' : 'warn')
+      }
 
-function addShotRow(name, w, h) {
-  const row = document.createElement('div');
-  row.className = 'shot-row';
-  row.dataset.w = w;
-  row.dataset.h = h;
-  row.innerHTML = `
+      function addShotRow(name, w, h) {
+        const row = document.createElement('div')
+        row.className = 'shot-row'
+        row.dataset.w = w
+        row.dataset.h = h
+        row.innerHTML = `
     <i class="fa-solid fa-mobile-screen"></i>
     <span class="shot-name">${name}</span>
     <span class="shot-status"></span>
-    <i class="fa-solid fa-xmark shot-remove" title="Remove"></i>`;
-  row.querySelector('.shot-remove').addEventListener('click', () => row.remove());
-  document.getElementById('shots-list').appendChild(row);
-  revalidateRow(row);
-  markStepReady('shots');
-  refreshStoreShots();
-}
+    <i class="fa-solid fa-xmark shot-remove" title="Remove"></i>`
+        row.querySelector('.shot-remove').addEventListener('click', () => row.remove())
+        document.getElementById('shots-list').appendChild(row)
+        revalidateRow(row)
+        markStepReady('shots')
+        refreshStoreShots()
+      }
 
-// Seed two demo rows
-addShotRow('home.png',    1320, 2868);
-addShotRow('profile.png', 1170, 2532);
+      // Seed two demo rows
+      addShotRow('home.png', 1320, 2868)
+      addShotRow('profile.png', 1170, 2532)
 
-document.getElementById('shots-upload').addEventListener('change', e => {
-  Array.from(e.target.files).forEach(file => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => addShotRow(file.name, img.naturalWidth, img.naturalHeight);
-    img.src = url;
-  });
-});
+      document.getElementById('shots-upload').addEventListener('change', (e) => {
+        Array.from(e.target.files).forEach((file) => {
+          const url = URL.createObjectURL(file)
+          const img = new Image()
+          img.onload = () => addShotRow(file.name, img.naturalWidth, img.naturalHeight)
+          img.src = url
+        })
+      })
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    FEATURE GRAPHIC
 ───────────────────────────── */
-document.getElementById('feature-upload').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  const img = new Image();
-  img.onload = () => {
-    const ok = img.naturalWidth === 1024 && img.naturalHeight === 500;
-    document.getElementById('feature-name').textContent = file.name;
-    document.getElementById('feature-name').style.color = 'var(--text-primary)';
-    const statusEl = document.getElementById('feature-status');
-    statusEl.textContent = `${img.naturalWidth}×${img.naturalHeight} · ${ok ? 'matches' : "doesn't match 1024×500"}`;
-    statusEl.className = 'shot-status ' + (ok ? 'pass' : 'warn');
+      document.getElementById('feature-upload').addEventListener('change', (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+        const url = URL.createObjectURL(file)
+        const img = new Image()
+        img.onload = () => {
+          const ok = img.naturalWidth === 1024 && img.naturalHeight === 500
+          document.getElementById('feature-name').textContent = file.name
+          document.getElementById('feature-name').style.color = 'var(--text-primary)'
+          const statusEl = document.getElementById('feature-status')
+          statusEl.textContent = `${img.naturalWidth}×${img.naturalHeight} · ${ok ? 'matches' : "doesn't match 1024×500"}`
+          statusEl.className = 'shot-status ' + (ok ? 'pass' : 'warn')
 
-    // load banner into store preview
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const banner = document.getElementById('play-feature-banner');
-      banner.style.backgroundImage = `url(${ev.target.result})`;
-      banner.textContent = '';
-    };
-    reader.readAsDataURL(file);
-    markStepReady('shots');
-  };
-  img.src = url;
-});
+          // load banner into store preview
+          const reader = new FileReader()
+          reader.onload = (ev) => {
+            const banner = document.getElementById('play-feature-banner')
+            banner.style.backgroundImage = `url(${ev.target.result})`
+            banner.textContent = ''
+          }
+          reader.readAsDataURL(file)
+          markStepReady('shots')
+        }
+        img.src = url
+      })
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    MOCKUP
 ───────────────────────────── */
-function buildMockupRow() {
-  const el = document.getElementById('mockup-row');
-  el.innerHTML = MOCKUP_SCREENS.map(s => `
+      function buildMockupRow() {
+        const el = document.getElementById('mockup-row')
+        el.innerHTML = MOCKUP_SCREENS.map(
+          (s) => `
     <div class="mockup-card">
       <div class="mockup-stage" style="background:${currentBg}">
         <div class="mockup-frame" style="${frameStyle(currentFrame)}">
@@ -648,102 +957,113 @@ function buildMockupRow() {
           style="color:${currentText}" aria-label="Caption for ${s.name}" />
       </div>
       <p class="mockup-filename">${s.name}</p>
-    </div>`).join('');
-}
+    </div>`,
+        ).join('')
+      }
 
-function frameStyle(kind) {
-  if (kind === 'phone')  return 'width:96px;height:190px;border-radius:18px;';
-  if (kind === 'tablet') return 'width:140px;height:170px;border-radius:12px;';
-  return 'width:110px;height:170px;border-radius:4px;';
-}
+      function frameStyle(kind) {
+        if (kind === 'phone') return 'width:96px;height:190px;border-radius:18px;'
+        if (kind === 'tablet') return 'width:140px;height:170px;border-radius:12px;'
+        return 'width:110px;height:170px;border-radius:4px;'
+      }
 
-buildMockupRow();
+      buildMockupRow()
 
-document.querySelectorAll('.frame-btn').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.frame-btn').forEach(x => x.classList.remove('selected'));
-    b.classList.add('selected');
-    currentFrame = b.dataset.frame;
-    document.querySelectorAll('.mockup-frame').forEach(f => f.style.cssText = frameStyle(currentFrame));
-    markStepReady('mockup');
-  });
-});
+      document.querySelectorAll('.frame-btn').forEach((b) => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.frame-btn').forEach((x) => x.classList.remove('selected'))
+          b.classList.add('selected')
+          currentFrame = b.dataset.frame
+          document
+            .querySelectorAll('.mockup-frame')
+            .forEach((f) => (f.style.cssText = frameStyle(currentFrame)))
+          markStepReady('mockup')
+        })
+      })
 
-document.querySelectorAll('.swatch').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
-    b.classList.add('selected');
-    currentBg   = b.dataset.bg;
-    currentText = b.dataset.text;
-    document.querySelectorAll('.mockup-stage').forEach(s => s.style.background = currentBg);
-    document.querySelectorAll('.mockup-caption-input').forEach(c => c.style.color = currentText);
-    document.querySelectorAll('.mockup-frame-label').forEach(l => l.style.color = currentText);
-    markStepReady('mockup');
-  });
-});
+      document.querySelectorAll('.swatch').forEach((b) => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.swatch').forEach((x) => x.classList.remove('selected'))
+          b.classList.add('selected')
+          currentBg = b.dataset.bg
+          currentText = b.dataset.text
+          document
+            .querySelectorAll('.mockup-stage')
+            .forEach((s) => (s.style.background = currentBg))
+          document
+            .querySelectorAll('.mockup-caption-input')
+            .forEach((c) => (c.style.color = currentText))
+          document
+            .querySelectorAll('.mockup-frame-label')
+            .forEach((l) => (l.style.color = currentText))
+          markStepReady('mockup')
+        })
+      })
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    STORE PREVIEW SHOTS
 ───────────────────────────── */
-function refreshStoreShots() {
-  const count = Math.max(
-    document.querySelectorAll('.shot-row').length,
-    MOCKUP_SCREENS.length
-  );
-  ['appstore-shots','play-shots'].forEach(id => {
-    const el = document.getElementById(id);
-    const isPlay = id.startsWith('play');
-    const w = isPlay ? 62 : 60, h = isPlay ? 110 : 120, r = isPlay ? 8 : 10;
-    el.innerHTML = Array.from({length: Math.min(count, 4)}).map(() =>
-      `<div class="store-shot-thumb" style="width:${w}px;height:${h}px;border-radius:${r}px;">W</div>`
-    ).join('');
-  });
-}
-refreshStoreShots();
+      function refreshStoreShots() {
+        const count = Math.max(document.querySelectorAll('.shot-row').length, MOCKUP_SCREENS.length)
+        ;['appstore-shots', 'play-shots'].forEach((id) => {
+          const el = document.getElementById(id)
+          const isPlay = id.startsWith('play')
+          const w = isPlay ? 62 : 60,
+            h = isPlay ? 110 : 120,
+            r = isPlay ? 8 : 10
+          el.innerHTML = Array.from({ length: Math.min(count, 4) })
+            .map(
+              () =>
+                `<div class="store-shot-thumb" style="width:${w}px;height:${h}px;border-radius:${r}px;">W</div>`,
+            )
+            .join('')
+        })
+      }
+      refreshStoreShots()
 
-document.querySelectorAll('.store-toggle').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.store-toggle').forEach(x => x.classList.remove('selected'));
-    b.classList.add('selected');
-    const which = b.dataset.store;
-    document.getElementById('store-ios').style.display     = which === 'ios'     ? '' : 'none';
-    document.getElementById('store-android').style.display = which === 'android' ? '' : 'none';
-  });
-});
+      document.querySelectorAll('.store-toggle').forEach((b) => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('.store-toggle').forEach((x) => x.classList.remove('selected'))
+          b.classList.add('selected')
+          const which = b.dataset.store
+          document.getElementById('store-ios').style.display = which === 'ios' ? '' : 'none'
+          document.getElementById('store-android').style.display = which === 'android' ? '' : 'none'
+        })
+      })
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    STEP NAV
 ───────────────────────────── */
-function showStep(step) {
-  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
-  document.getElementById('panel-' + step).classList.add('active');
-  document.querySelectorAll('.step-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.step === step);
-  });
-}
+      function showStep(step) {
+        document.querySelectorAll('section').forEach((s) => s.classList.remove('active'))
+        document.getElementById('panel-' + step).classList.add('active')
+        document.querySelectorAll('.step-btn').forEach((b) => {
+          b.classList.toggle('active', b.dataset.step === step)
+        })
+      }
 
-document.querySelectorAll('.step-btn').forEach(b => {
-  b.addEventListener('click', () => showStep(b.dataset.step));
-});
+      document.querySelectorAll('.step-btn').forEach((b) => {
+        b.addEventListener('click', () => showStep(b.dataset.step))
+      })
 
-function markStepReady(step) {
-  const btn = document.querySelector(`.step-btn[data-step="${step}"]`);
-  if (btn && !btn.querySelector('.step-check')) {
-    const chk = document.createElement('i');
-    chk.className = 'fa-solid fa-check step-check';
-    chk.setAttribute('aria-hidden', 'true');
-    btn.appendChild(chk);
-  }
-  const n = document.querySelectorAll('.step-check').length;
-  document.getElementById('ready-summary').textContent = `${n} of 3 steps ready`;
-}
+      function markStepReady(step) {
+        const btn = document.querySelector(`.step-btn[data-step="${step}"]`)
+        if (btn && !btn.querySelector('.step-check')) {
+          const chk = document.createElement('i')
+          chk.className = 'fa-solid fa-check step-check'
+          chk.setAttribute('aria-hidden', 'true')
+          btn.appendChild(chk)
+        }
+        const n = document.querySelectorAll('.step-check').length
+        document.getElementById('ready-summary').textContent = `${n} of 3 steps ready`
+      }
 
-/* ─────────────────────────────
+      /* ─────────────────────────────
    EXPORT (stub)
 ───────────────────────────── */
-document.getElementById('export-btn').addEventListener('click', () => {
-  alert('Export All — wire this up to your canvas → JSZip pipeline.');
-});
-</script>
-</body>
+      document.getElementById('export-btn').addEventListener('click', () => {
+        alert('Export All — wire this up to your canvas → JSZip pipeline.')
+      })
+    </script>
+  </body>
 </html>

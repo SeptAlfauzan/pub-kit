@@ -13,9 +13,9 @@ describe('App', () => {
     setActivePinia(createPinia())
   })
 
-  it('renders the Launchsheet header', () => {
+  it('renders the PubKit header', () => {
     const wrapper = mount(App)
-    expect(wrapper.text()).toContain('Launchsheet')
+    expect(wrapper.text()).toContain('PubKit')
   })
 
   it('shows project name from store', () => {

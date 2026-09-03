@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
-test('Launchsheet loads and shows all four steps', async ({ page }) => {
+test('PubKit loads and shows all four steps', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.locator('.logo-title')).toHaveText('Launchsheet')
+  await expect(page.locator('.logo-title')).toHaveText('PubKit')
   await expect(page.locator('.step-btn')).toHaveCount(4)
 
   await expect(page.locator('#panel-icon')).toBeVisible()

@@ -30,7 +30,7 @@ const store = useProjectStore()
         </div>
         <div class="store-meta">
           <div class="app-name">{{ store.appName }}</div>
-          <div class="app-cat">Launchsheet Labs</div>
+          <div class="app-cat">PubKit Labs</div>
           <div class="app-rating">★ 4.6 · 10k+ downloads</div>
         </div>
         <button class="store-install-btn">Install</button>
