@@ -1,6 +1,35 @@
-self.onmessage = (e: MessageEvent) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, op, payload } = e.data
-  // Placeholder — will be implemented in Task 7
-  self.postMessage({ id, status: 'ok', result: null })
+interface IconJobPayload {
+  sourceWidth: number
+  sourceHeight: number
+  sizes: { key: string; width: number; height: number }[]
+  sourceBitmap?: ImageBitmap
+}
+
+self.onmessage = async (e: MessageEvent) => {
+  const { id, payload } = e.data as { id: string; payload: IconJobPayload }
+
+  try {
+    const bitmap = payload.sourceBitmap
+    if (!bitmap) {
+      self.postMessage({ id, status: 'error', error: 'No source bitmap' })
+      return
+    }
+
+    const results: { key: string; blob: Blob }[] = []
+
+    for (const size of payload.sizes) {
+      const canvas = new OffscreenCanvas(size.width, size.height)
+      const ctx = canvas.getContext('2d')!
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
+      ctx.drawImage(bitmap, 0, 0, size.width, size.height)
+      const blob = await canvas.convertToBlob({ type: 'image/png' })
+      results.push({ key: size.key, blob })
+    }
+
+    bitmap.close()
+    self.postMessage({ id, status: 'ok', result: results })
+  } catch (err) {
+    self.postMessage({ id, status: 'error', error: String(err) })
+  }
 }
