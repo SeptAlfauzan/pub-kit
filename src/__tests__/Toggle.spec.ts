@@ -52,6 +52,54 @@ describe('Toggle', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['none'])
   })
 
+  it('moves to next option on ArrowRight', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'phone', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tablet'])
+  })
+
+  it('moves to previous option on ArrowLeft', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'tablet', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['phone'])
+  })
+
+  it('moves to next option on ArrowDown', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'phone', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowDown' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['tablet'])
+  })
+
+  it('moves to previous option on ArrowUp', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'tablet', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowUp' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['phone'])
+  })
+
+  it('wraps around from last to first on ArrowRight', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'none', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowRight' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['phone'])
+  })
+
+  it('wraps around from first to last on ArrowLeft', async () => {
+    const wrapper = mount(Toggle, {
+      props: { modelValue: 'phone', options },
+    })
+    await wrapper.find('[role="radiogroup"]').trigger('keydown', { key: 'ArrowLeft' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['none'])
+  })
+
   it('applies selected class to active option', () => {
     const wrapper = mount(Toggle, {
       props: { modelValue: 'phone', options },

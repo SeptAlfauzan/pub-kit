@@ -72,11 +72,15 @@ function onKeydown(e: KeyboardEvent) {
   font-size: 13px;
   transition: background 0.15s, border-color 0.15s;
 }
-.dropzone:hover,
+.dropzone:hover {
+  border-color: var(--fill-primary);
+  background: var(--fill-ghost-hover);
+}
 .dropzone:focus-visible {
   border-color: var(--fill-primary);
   background: var(--fill-ghost-hover);
-  outline: none;
+  outline: 2px solid var(--fill-primary);
+  outline-offset: 2px;
 }
 .dropzone.inline {
   flex-direction: row;
