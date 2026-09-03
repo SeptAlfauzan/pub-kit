@@ -15,6 +15,8 @@ import AppStoreCard from '@/components/store-preview-step/AppStoreCard.vue'
 import GooglePlayCard from '@/components/store-preview-step/GooglePlayCard.vue'
 import { exportAll } from '@/services/zip-exporter'
 import { stageToPng, renderStoreShot } from '@/services/mockup-composer'
+import { batchResize } from '@/services/screenshot-resizer'
+import { TARGET_SIZES } from '@/config/store-screenshot-sizes'
 
 const store = useProjectStore()
 const exporting = ref(false)
@@ -44,11 +46,36 @@ async function handleExport() {
   try {
     const mockupImages: { id: string; blob: Blob; name: string }[] = []
     const storeScreenshots: { id: string; blob: Blob; name: string }[] = []
+
+    // Normalize every screenshot to the exact target size so all exports share
+    // the same dimensions and aspect ratio.
+    const resized = await batchResize(
+      store.shots.map((s) => ({ id: s.id, file: s.file })),
+      store.targetSizeIndex,
+      'center-crop',
+    )
+    const resizedById = new Map(resized.map((r) => [r.id, r]))
+    const resizedUrl = new Map<string, string>()
+
     const shotPromises = store.shots.map(async (shot) => {
+      const resizedBlob = resizedById.get(shot.id)?.blob
+      if (!resizedBlob) return
+
+      const target = TARGET_SIZES[store.targetSizeIndex]
+      if (!target) return
+
+      let url = resizedUrl.get(shot.id)
+      if (!url) {
+        url = URL.createObjectURL(resizedBlob)
+        resizedUrl.set(shot.id, url)
+      }
+
       const framed = await renderStoreShot({
-        shotUrl: shot.url,
+        shotUrl: url,
         bg: store.mockupSettings.bg,
         frame: store.mockupSettings.frame,
+        width: target.width,
+        height: target.height,
       })
       storeScreenshots.push({ id: shot.id, blob: framed, name: shot.name })
 
@@ -61,6 +88,10 @@ async function handleExport() {
       }
     })
     await Promise.all(shotPromises)
+
+    for (const url of resizedUrl.values()) {
+      URL.revokeObjectURL(url)
+    }
 
     const blob = await exportAll({
       iconResults: store.iconResults,

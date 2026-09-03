@@ -30,6 +30,7 @@ export interface Shot {
   height: number
   file: File
   url: string
+  resizedUrl: string
   status: ShotStatus
   statusMessage: string
 }

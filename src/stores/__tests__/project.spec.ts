@@ -1,6 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useProjectStore } from '../project'
+
+vi.mock('@/services/screenshot-resizer', () => ({
+  resizeScreenshot: vi.fn(async () => new Blob()),
+}))
 
 describe('useProjectStore', () => {
   beforeEach(() => {

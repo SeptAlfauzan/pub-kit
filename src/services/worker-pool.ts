@@ -5,7 +5,7 @@ export interface PoolJob {
 }
 
 export interface PoolOptions {
-  workerUrl: string | URL
+  workerFactory: () => Worker
   maxWorkers?: number
 }
 
@@ -26,20 +26,19 @@ export class WorkerPool {
   private cancelled = new Set<string>()
   private retryCounts = new Map<string, number>()
   private maxRetries = 3
+  private _workerFactory: () => Worker
 
-  constructor(
-    { workerUrl, maxWorkers = 4 }: PoolOptions,
-    private _workerUrl: string | URL = workerUrl,
-  ) {
+  constructor({ workerFactory, maxWorkers = 4 }: PoolOptions) {
+    this._workerFactory = workerFactory
     const rawCount = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 2 : 2
     const count = Math.max(1, Math.min(rawCount, maxWorkers))
     for (let i = 0; i < count; i++) {
-      this._spawnWorker(workerUrl, i)
+      this._spawnWorker(i)
     }
   }
 
-  private _spawnWorker(workerUrl: string | URL, index?: number): Worker {
-    const worker = new Worker(workerUrl)
+  private _spawnWorker(index?: number): Worker {
+    const worker = this._workerFactory()
     const idx = index ?? this.workers.length
 
     if (index !== undefined) {
@@ -75,7 +74,7 @@ export class WorkerPool {
       const wIdx = this.workers.indexOf(worker)
       const inFlightId = wIdx !== -1 ? this.workerPending[wIdx] : null
 
-      this._replaceWorker(wIdx, workerUrl)
+      this._replaceWorker(wIdx)
 
       if (inFlightId) {
         this.retryJob(inFlightId)
@@ -85,10 +84,10 @@ export class WorkerPool {
     return worker
   }
 
-  private _replaceWorker(failedIndex: number, workerUrl: string | URL): void {
+  private _replaceWorker(failedIndex: number): void {
     if (failedIndex < 0 || failedIndex >= this.workers.length) return
     this.workers[failedIndex]!.terminate()
-    this._spawnWorker(workerUrl, failedIndex)
+    this._spawnWorker(failedIndex)
   }
 
   dispatch<T>(job: PoolJob): Promise<T> {

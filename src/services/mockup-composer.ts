@@ -10,6 +10,8 @@ export interface StoreShotRender {
   shotUrl: string
   bg: string
   frame: 'phone' | 'tablet' | 'none'
+  width: number
+  height: number
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -25,7 +27,7 @@ export async function renderStoreShot(opts: StoreShotRender): Promise<Blob> {
   const shotImage = await loadImage(opts.shotUrl)
 
   const stageWidth = 320
-  const stageHeight = Math.round(stageWidth * (shotImage.naturalHeight / shotImage.naturalWidth))
+  const stageHeight = Math.round(stageWidth * (opts.height / opts.width))
 
   const showFrame = opts.frame !== 'none'
   const frameRadius = opts.frame === 'phone' ? 38 : opts.frame === 'tablet' ? 24 : 4

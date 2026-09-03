@@ -2,6 +2,7 @@ import { ref, reactive, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { StepId, Shot, FeatureGraphic, MockupSettings, IconResult } from '@/models/types'
 import { validateShot, validateFeatureGraphic } from '@/services/validation'
+import { resizeScreenshot } from '@/services/screenshot-resizer'
 
 export const useProjectStore = defineStore('project', () => {
   const currentStep = ref<StepId>('icon')
@@ -40,6 +41,25 @@ export const useProjectStore = defineStore('project', () => {
 
   // --- Actions ---
 
+  async function computeResizedUrls() {
+    const target = targetSizeIndex.value
+    const updates = await Promise.all(
+      shots.value.map(async (shot) => {
+        try {
+          const blob = await resizeScreenshot(shot.file, target, 'center-crop')
+          return { id: shot.id, url: URL.createObjectURL(blob) }
+        } catch {
+          return { id: shot.id, url: '' }
+        }
+      }),
+    )
+    const urlById = new Map(updates.map((u) => [u.id, u.url]))
+    for (const shot of shots.value) {
+      if (shot.resizedUrl) URL.revokeObjectURL(shot.resizedUrl)
+      shot.resizedUrl = urlById.get(shot.id) ?? ''
+    }
+  }
+
   function setStep(step: StepId) {
     currentStep.value = step
   }
@@ -62,6 +82,8 @@ export const useProjectStore = defineStore('project', () => {
       shot.status = result.status
       shot.statusMessage = result.message
     }
+    // Re-resize all shots to the new target
+    computeResizedUrls()
   }
 
   function addShot(data: {
@@ -75,15 +97,20 @@ export const useProjectStore = defineStore('project', () => {
     const result = validateShot(data.width, data.height, targetSizeIndex.value)
     shots.value.push({
       ...data,
+      resizedUrl: '',
       status: result.status,
       statusMessage: result.message,
     })
     if (shots.value.length > 0) {
       readySteps.shots = true
     }
+    // Resize eagerly — URL updates reactively when complete
+    computeResizedUrls()
   }
 
   function removeShot(id: string) {
+    const shot = shots.value.find((s) => s.id === id)
+    if (shot?.resizedUrl) URL.revokeObjectURL(shot.resizedUrl)
     shots.value = shots.value.filter((s) => s.id !== id)
     if (shots.value.length === 0 && !featureGraphic.value) {
       readySteps.shots = false

@@ -2,13 +2,14 @@ import { IOS_ICON_SIZES } from '@/config/ios-icon-sizes'
 import { ALL_ANDROID_SIZES } from '@/config/android-icon-sizes'
 import type { IconResult } from '@/models/types'
 import { WorkerPool } from './worker-pool'
+import IconWorker from './workers/icon.worker.ts?worker'
 
 let pool: WorkerPool | null = null
 
 function getPool(): WorkerPool {
   if (!pool) {
     pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new IconWorker(),
       maxWorkers: 2,
     })
   }

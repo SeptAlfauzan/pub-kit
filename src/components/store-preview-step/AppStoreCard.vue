@@ -29,7 +29,7 @@ const store = useProjectStore()
         <StoreShotCard
           v-for="shot in store.shots"
           :key="shot.id"
-          :shot-url="shot.url"
+          :shot-url="shot.resizedUrl || shot.url"
           :shot-name="shot.name"
         />
         <div v-if="store.shots.length === 0" class="store-shot-thumb placeholder">—</div>

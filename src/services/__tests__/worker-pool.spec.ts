@@ -75,7 +75,7 @@ describe('WorkerPool', () => {
 
   it('creates workers based on hardwareConcurrency', () => {
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 4,
     })
     expect(MockWorker.instanceCount).toBe(4)
@@ -85,7 +85,7 @@ describe('WorkerPool', () => {
   it('caps workers at maxWorkers', () => {
     vi.stubGlobal('navigator', { hardwareConcurrency: 16 })
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 4,
     })
     expect(MockWorker.instanceCount).toBe(4)
@@ -94,7 +94,7 @@ describe('WorkerPool', () => {
 
   it('dispatches a job and resolves', async () => {
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 2,
     })
     const result = await pool.dispatch<{ test: boolean }>({ id: 'job-1', op: 'test', payload: {} })
@@ -104,7 +104,7 @@ describe('WorkerPool', () => {
 
   it('round-robins across workers', async () => {
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 2,
     })
     const postSpy = vi.spyOn(MockWorker.prototype, 'postMessage')
@@ -118,7 +118,7 @@ describe('WorkerPool', () => {
 
   it('terminate kills all workers', () => {
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 3,
     })
     const spy = vi.spyOn(MockWorker.prototype, 'terminate')
@@ -130,7 +130,7 @@ describe('WorkerPool', () => {
     vi.stubGlobal('Worker', FlakyWorker)
     FlakyWorker.failuresToStart = 1
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 1,
     })
     // The single worker fails once, then succeeds → retry path must recover.
@@ -143,7 +143,7 @@ describe('WorkerPool', () => {
     vi.stubGlobal('Worker', FlakyWorker)
     FlakyWorker.failuresToStart = 999 // always fail
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 1,
     })
     await expect(pool.dispatch({ id: 'doomed', op: 'test', payload: {} })).rejects.toThrow(
@@ -190,7 +190,7 @@ describe('WorkerPool', () => {
     vi.stubGlobal('Worker', CrashThenSucceedWorker)
 
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 1,
     })
 
@@ -226,7 +226,7 @@ describe('WorkerPool', () => {
     vi.stubGlobal('Worker', AlwaysCrashWorker)
 
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 1,
     })
 
@@ -241,7 +241,7 @@ describe('WorkerPool', () => {
   it('creates at least 1 worker when maxWorkers is 0', () => {
     vi.stubGlobal('navigator', { hardwareConcurrency: 0 })
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 0,
     })
     expect(MockWorker.instanceCount).toBe(1)
@@ -250,7 +250,7 @@ describe('WorkerPool', () => {
 
   it('cancels a pending job', async () => {
     const pool = new WorkerPool({
-      workerUrl: new URL('./workers/icon.worker.ts', import.meta.url),
+      workerFactory: () => new Worker('test'),
       maxWorkers: 1,
     })
     const promise = pool.dispatch({ id: 'job-c', op: 'test', payload: {} })

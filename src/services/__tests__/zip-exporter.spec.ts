@@ -55,6 +55,7 @@ describe('buildZipStructure', () => {
       height: 2868,
       file: new File(['raw'], 'hero.png'),
       url: 'blob:raw',
+      resizedUrl: '',
       status: 'pass' as const,
       statusMessage: 'ok',
     }
@@ -80,6 +81,7 @@ describe('buildZipStructure', () => {
       height: 2868,
       file: new File(['raw-webp'], 'photo.webp'),
       url: 'blob:raw',
+      resizedUrl: '',
       status: 'pass' as const,
       statusMessage: 'ok',
     }

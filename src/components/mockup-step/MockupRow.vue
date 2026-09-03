@@ -22,7 +22,7 @@ defineExpose({ getStage })
       :key="shot.id"
       ref="cards"
       :shot-id="shot.id"
-      :shot-url="shot.url"
+      :shot-url="shot.resizedUrl || shot.url"
       :shot-name="shot.name"
     />
     <p v-if="store.shots.length === 0" class="empty-text">

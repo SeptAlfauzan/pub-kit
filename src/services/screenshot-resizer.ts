@@ -1,12 +1,13 @@
 import { TARGET_SIZES } from '@/config/store-screenshot-sizes'
 import { WorkerPool } from './worker-pool'
+import ScreenshotWorker from './workers/screenshot.worker.ts?worker'
 
 let pool: WorkerPool | null = null
 
 function getPool(): WorkerPool {
   if (!pool) {
     pool = new WorkerPool({
-      workerUrl: new URL('./workers/screenshot.worker.ts', import.meta.url),
+      workerFactory: () => new ScreenshotWorker(),
       maxWorkers: 4,
     })
   }
