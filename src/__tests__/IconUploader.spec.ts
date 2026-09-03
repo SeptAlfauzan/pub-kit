@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import Step1Icon from '../components/steps/Step1Icon.vue'
+import Step1Icon from '../components/icon-step/IconUploader.vue'
 import { useProjectStore } from '@/stores/project'
 import type { IconResult } from '@/models/types'
 
@@ -26,7 +26,7 @@ function makeResults(count: number): IconResult[] {
   }))
 }
 
-describe('Step1Icon', () => {
+describe('IconUploader', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
@@ -168,5 +168,30 @@ describe('Step1Icon', () => {
 
     const labeledTiles = wrapper.findAll('[aria-label]')
     expect(labeledTiles.length).toBeGreaterThan(0)
+  })
+
+  it('revokes source and result URLs on unmount', async () => {
+    const revokeSpy = vi.spyOn(URL, 'revokeObjectURL')
+    const { generateIcons } = await import('@/services/icon-generator')
+    vi.mocked(generateIcons).mockResolvedValue(makeResults(3))
+
+    const store = useProjectStore()
+    const wrapper = mount(Step1Icon)
+    const file = new File(['data'], 'icon.png', { type: 'image/png' })
+    const dropzone = wrapper.findComponent({ name: 'Dropzone' })
+    await dropzone.vm.$emit('files', [file])
+    await flushPromises()
+
+    expect(store.iconSource).toBeTruthy()
+    expect(store.iconResults).toHaveLength(3)
+
+    wrapper.unmount()
+
+    expect(revokeSpy).toHaveBeenCalledWith(store.iconSource)
+    for (const r of store.iconResults) {
+      expect(revokeSpy).toHaveBeenCalledWith(r.url)
+    }
+
+    revokeSpy.mockRestore()
   })
 })
